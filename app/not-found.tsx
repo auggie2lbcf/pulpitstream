@@ -8,9 +8,6 @@ export default function NotFound() {
       <h2>Not Found</h2>
       <p>Could not find requested resource</p>
       <p>
-        View <Link href="/protected">protected</Link>
-      </p>
-      <p>
         View <Link href="/">Home</Link>
       </p>
     </div>
