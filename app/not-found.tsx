@@ -1,4 +1,3 @@
-// app/_not-found.js
 import Link from 'next/link';
 
 export const runtime = 'edge'; // Add this line
