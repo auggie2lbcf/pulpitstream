@@ -10,17 +10,19 @@ type EpisodePlayerPageProps = {
     podcast_slug: string;
     episode_id: string; // Episode ID will be a string from the URL
   };
+
+  searchParams?: { [key: string]: string | string[] | undefined };
 };
 
 // Define type for the joined query result
 type EpisodeWithPodcast = Database['public']['Tables']['episodes']['Row'] & {
-  podcasts: Pick<Database['public']['Tables']['podcasts']['Row'], 'title' | 'image_url'> | null;
-};
+    podcasts: Pick<Database['public']['Tables']['podcasts']['Row'], 'title' | 'image_url'> | null;
+  };
 
 
-export default async function EpisodePlayerPage({ params }: EpisodePlayerPageProps) {
-  const supabase = await createClient();
-  const { podcast_slug, episode_id } = params;
+  export default async function EpisodePlayerPage({ params }: EpisodePlayerPageProps) {
+    const supabase = await createClient();
+    const { podcast_slug, episode_id } = params;
 
   // Validate episode_id is a number before querying
   const episodeIdNumber = parseInt(episode_id, 10);
