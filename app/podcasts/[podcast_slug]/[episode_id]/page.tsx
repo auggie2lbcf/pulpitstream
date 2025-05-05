@@ -19,34 +19,31 @@ type EpisodeWithPodcast = Database['public']['Tables']['episodes']['Row'] & {
     podcasts: Pick<Database['public']['Tables']['podcasts']['Row'], 'title' | 'image_url'> | null;
   };
 
-
-  export default async function EpisodePlayerPage({ params }: EpisodePlayerPageProps) {
-    const supabase = await createClient();
-    const { podcast_slug, episode_id } = await params;
+export default async function EpisodePlayerPage({ params }: EpisodePlayerPageProps) {
+  const supabase = await createClient();
+  const { podcast_slug, episode_id } = params; // Removed `await`
 
   // Validate episode_id is a number before querying
   const episodeIdNumber = parseInt(episode_id, 10);
   if (isNaN(episodeIdNumber)) {
-      console.error("Invalid episode ID:", episode_id);
-      notFound();
+    console.error("Invalid episode ID:", episode_id);
+    notFound();
   }
 
   // Fetch the specific episode and include podcast title/image for context
-  // Using a join for efficiency
   const { data: episode, error } = await supabase
     .from("episodes")
     .select(`
       *,
       podcasts ( title, image_url )
     `)
-    .eq("id", episodeIdNumber) // Use the numeric ID
-    .eq("podcast_slug", podcast_slug) // Ensure it belongs to the correct podcast slug
-    .single<EpisodeWithPodcast>(); // Get a single result and apply the type
-
+    .eq("id", episodeIdNumber)
+    .eq("podcast_slug", podcast_slug)
+    .single<EpisodeWithPodcast>();
 
   if (error || !episode) {
     console.error("Error fetching episode:", error);
-    notFound(); // Show 404 if episode not found or doesn't match slug
+    notFound();
   }
 
   // Extract podcast info from the joined data
