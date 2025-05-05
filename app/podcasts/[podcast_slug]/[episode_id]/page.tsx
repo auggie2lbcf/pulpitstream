@@ -22,7 +22,7 @@ type EpisodeWithPodcast = Database['public']['Tables']['episodes']['Row'] & {
 
   export default async function EpisodePlayerPage({ params }: EpisodePlayerPageProps) {
     const supabase = await createClient();
-    const { podcast_slug, episode_id } = params;
+    const { podcast_slug, episode_id } = await params;
 
   // Validate episode_id is a number before querying
   const episodeIdNumber = parseInt(episode_id, 10);

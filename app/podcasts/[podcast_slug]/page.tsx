@@ -12,7 +12,7 @@ type PodcastEpisodePageProps = {
 
 export default async function PodcastEpisodesListPage({ params }: PodcastEpisodePageProps) { // Renamed component for clarity
   const supabase = await createClient();
-  const { podcast_slug } = params;
+  const { podcast_slug } = await params;
 
   // Fetch podcast details (keep this for context)
   const { data: podcast, error: podcastError } = await supabase
