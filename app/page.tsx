@@ -27,6 +27,7 @@ export default async function Home() {
           <InfoIcon size="16" strokeWidth={2} />
           protected home page
           <Link href="/protected">/protected</Link>
+          <Link href="/podcasts">/podcasts</Link>
         </div>
       </div>
       <Hero />
