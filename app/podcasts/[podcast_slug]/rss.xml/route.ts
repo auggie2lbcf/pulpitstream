@@ -120,7 +120,7 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
       podcastFeed.addItem({
         title: episode.title,
         id: episodeUrl, // Unique ID for the episode
-        link: episodeUrl, // Consider escaping this URL as well if it might contain special characters
+        link: escapedAudioUrl, // TODO - Check if this should be the episode URL or audio URL
         description: episode.description || "",
         content: episode.description || "", // Or full content/shownotes
         author: [
