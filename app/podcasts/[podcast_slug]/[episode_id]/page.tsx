@@ -6,11 +6,10 @@ import { notFound } from "next/navigation";
 import type { Database } from "@/types/supabase"; // Import Database type
 
 type EpisodePlayerPageProps = {
-  params: {
+  params: Promise<{
     podcast_slug: string;
-    episode_id: string; // Episode ID will be a string from the URL
-  };
-
+    episode_id: string;
+  }>;
   searchParams?: { [key: string]: string | string[] | undefined };
 };
 
@@ -20,8 +19,9 @@ type EpisodeWithPodcast = Database['public']['Tables']['episodes']['Row'] & {
   };
 
 export default async function EpisodePlayerPage({ params }: EpisodePlayerPageProps) {
+  const { podcast_slug, episode_id } = await params;
+  
   const supabase = await createClient();
-  const { podcast_slug, episode_id } = params; // Removed `await`
 
   // Validate episode_id is a number before querying
   const episodeIdNumber = parseInt(episode_id, 10);
