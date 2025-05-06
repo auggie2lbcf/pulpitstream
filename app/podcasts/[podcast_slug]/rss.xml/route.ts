@@ -1,6 +1,7 @@
-import { Feed } from "feed";
+import { Feed, FeedOptions } from "feed";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
+import { Tables } from "@/types/supabase";
 
 export const runtime = "edge";
 
@@ -11,8 +12,8 @@ function escapeXmlUrl(url: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;")
-    .replace(/%/g, '%25')
-    .replace(/\s/g, '%20');
+    .replace(/%/g, "%25")
+    .replace(/\s/g, "%20");
 }
 
 type PodcastFeedProps = Promise<{
@@ -62,6 +63,8 @@ export async function GET(
     updated: new Date(),
     generator: "Feed for Next.js",
     copyright: `Copyright © ${new Date().getFullYear()} ${profileData.first_name} ${profileData.last_name}`,
+    podcast: true,
+    
     feedLinks: {
       rss2: podcastFeedUrl,
     },
@@ -72,20 +75,20 @@ export async function GET(
   });
 
   feed.addExtension({
-    name: 'itunes',
+    name: "itunes",
     objects: {
       owner: {
         name: `${profileData.first_name} ${profileData.last_name}`,
-        email: profileData.email
+        email: profileData.email,
       },
       author: `${profileData.first_name} ${profileData.last_name}`,
-      category: ['Religion & Spirituality'],
+      category: ["Religion & Spirituality"],
       explicit: false,
       image: podcastData.image_url || `${siteUrl}/image.png`,
       summary: podcastData.description || "",
-      type: 'episodic'
-    }
-  })
+      type: "episodic",
+    },
+  });
 
   const { data: episodes, error: episodesError } = await supabase
     .from("episodes")
@@ -106,7 +109,9 @@ export async function GET(
         title: episode.title,
         id: episode.episode_slug,
         link: escapeXmlUrl(episode.audio_url),
-        description: episode.description?.replace(/<[^>]*>?/gm, "").substring(0, 255),
+        description: episode.description
+          ?.replace(/<[^>]*>?/gm, "")
+          .substring(0, 255),
         content: episode.description,
         author: [
           {
@@ -125,10 +130,11 @@ export async function GET(
 
   feed.addCategory("Technologie"); //TODO: Add dynamic categories
 
-  feed.addContributor({ //TODO: Add dynamic categories
+  feed.addContributor({
+    //TODO: Add dynamic categories
     name: "Johan Cruyff",
     email: "johancruyff@example.com",
-    link: "https://example.com/johancruyff"
+    link: "https://example.com/johancruyff",
   });
 
   return new NextResponse(feed.rss2(), {
@@ -136,7 +142,7 @@ export async function GET(
       "Content-Type": "application/rss+xml; charset=utf-8",
       "Cache-Control": "public, s-maxage=600, stale-while-revalidate=300",
       "Content-Length": Buffer.byteLength(feed.rss2()).toString(),
-      "ETag": `"${podcast_slug}"`,
+      ETag: `"${podcast_slug}"`,
       "Last-Modified": new Date().toUTCString(),
       "Access-Control-Allow-Origin": "*", // CORS header
       "Access-Control-Allow-Methods": "GET, OPTIONS", // CORS header
