@@ -1,3 +1,13 @@
+// /app/podcasts/[podcast_slug]/rss.xml/route.ts
+// This file generates an RSS feed for a specific podcast based on its slug.
+// It uses the Feed package to create the RSS XML structure and fetches data from Supabase.
+//
+// The feed includes metadata about the podcast and its episodes, and is served with the correct MIME type.
+//
+// The feed is generated dynamically based on the podcast slug provided in the URL.
+// It also handles errors gracefully, returning a 404 response if the podcast is not found or if there are issues fetching data.
+
+
 import { Feed } from "feed";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
@@ -58,9 +68,8 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
     updated: new Date(), // Or use the date of the latest episode
     generator: "Next.js using Feed package",
     feedLinks: {
-      // Correctly point to this feed's URL
+      self: `${podcastBaseUrl}/rss.xml`,
       rss: `${podcastBaseUrl}/rss.xml`,
-      // atom: `${podcastBaseUrl}/atom.xml`, // If you plan to create an Atom feed
     },
     author: {
       name: "Your Name or Podcast Host", // Replace
