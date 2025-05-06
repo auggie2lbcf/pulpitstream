@@ -70,7 +70,7 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
   // Construct the base URL for your site dynamically or from environment variables
   // For local development, you might use localhost. For production, your actual domain.
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `http://localhost:3000`; // Replace with your actual site URL or env variable
-  const podcastBaseUrl = `${siteUrl}/podcasts/${podcastData.feed_slug}`;
+  const podcastBaseUrl = `https://${siteUrl}/podcasts/${podcastData.feed_slug}`;
 
   const podcastFeed = new Feed({
     title: podcastData.title || "My Podcast",
@@ -90,8 +90,9 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
     author: {
       name: podcastData.title,
       email: profileData.email,
-      // link: "https://example.com/about-host", // Optional
+      link: "https://example.com/about-host",
     },
+
   });
 
   // Fetch episodes for this specific podcast
@@ -123,15 +124,14 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
         link: escapedAudioUrl, // TODO - Check if this should be the episode URL or audio URL
         description: episode.description || "",
         content: episode.description || "", // Or full content/shownotes
-        author: [
-          {
-            name: podcastData.title, // Potentially fetch speaker name using speaker_id
-            email: profileData.email,
-            link: "link-to-speaker-bio.com"
-          },
-        ],
+        author: [{
+          name: podcastData.title,
+          email: profileData.email,
+          link: "https://example.com/about-host",
+        },],
+        category: episode.series,
         date: new Date(episode.date),
-        image: episode.image_url || podcastData.image_url || undefined, // Episode image, fallback to podcast image
+        image: episode.image_url || podcastData.image_url || `${siteUrl}/image.png`, // Episode image, fallback to podcast image
         enclosure: escapedAudioUrl
           ? {
               url: escapedAudioUrl,
@@ -152,3 +152,4 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
     },
   });
 }
+
