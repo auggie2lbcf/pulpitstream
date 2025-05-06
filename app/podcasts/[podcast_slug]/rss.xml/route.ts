@@ -86,7 +86,7 @@ export async function GET(
       const episodeUrl = `${podcastBaseUrl}/${episode.episode_slug}`;
       feed.addItem({
         title: episode.title,
-        id: episodeUrl,
+        id: episode.episode_slug,
         link: escapeXmlUrl(episode.audio_url),
         description: episode.description?.replace(/<[^>]*>?/gm, "").substring(0, 255),
         content: episode.description,
@@ -97,7 +97,7 @@ export async function GET(
         ],
         date: new Date(episode.date),
         enclosure: {
-          url: episode.audio_url,
+          url: escapeXmlUrl(episode.audio_url),
           type: "audio/mpeg",
         },
       });
