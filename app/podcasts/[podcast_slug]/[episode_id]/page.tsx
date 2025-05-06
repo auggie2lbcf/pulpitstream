@@ -5,20 +5,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Database } from "@/types/supabase"; // Import Database type
 
-type EpisodePlayerPageProps = {
-  params: Promise<{
-    podcast_slug: string;
-    episode_id: string;
-  }>;
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
-};
+type EpisodePlayerPageProps = Promise<{
+  podcast_slug: string;
+  episode_id: string;
+}>;
 
 // Define type for the joined query result
 type EpisodeWithPodcast = Database['public']['Tables']['episodes']['Row'] & {
     podcasts: Pick<Database['public']['Tables']['podcasts']['Row'], 'title' | 'image_url'> | null;
   };
 
-export default async function EpisodePlayerPage({ params }: EpisodePlayerPageProps) {
+export default async function EpisodePlayerPage({ params }: {params: EpisodePlayerPageProps }) {
   const { podcast_slug, episode_id } = await params;
   
   const supabase = await createClient();
