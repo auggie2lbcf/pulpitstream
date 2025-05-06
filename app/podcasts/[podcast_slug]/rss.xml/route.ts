@@ -12,18 +12,12 @@ function escapeXmlUrl(url: string): string {
     .replace(/'/g, "&apos;");
 }
 
-export const runtime = 'edge';
-
-type PodcastFeedParams = Promise<{
-  podcast_slug: string;
-}>;
-
 export async function GET(
   request: Request,
-  { params }: { params: PodcastFeedParams },
+  { params }: { params: { podcast_slug: string } },
 ) {
   // Get the podcast_slug from the dynamic route parameters
-  const podcastSlug = await params;
+  const podcastSlug = params.podcast_slug;
 
   const supabase = await createClient();
 
@@ -109,7 +103,7 @@ export async function GET(
           },
         ],
         date: new Date(episode.date),
-        image: episode.image_url || podcastData.image_url || "/image.png", // Episode image, fallback to podcast image
+        image: episode.image_url || podcastData.image_url || undefined, // Episode image, fallback to podcast image
         enclosure: escapedAudioUrl
           ? {
               url: escapedAudioUrl,
