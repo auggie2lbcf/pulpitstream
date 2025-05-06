@@ -10,7 +10,7 @@ type EpisodePlayerPageProps = {
     podcast_slug: string;
     episode_id: string;
   }>;
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 // Define type for the joined query result
