@@ -37,7 +37,7 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
   // Fetch podcast details to use in the feed metadata
   const { data: podcastData, error: podcastError } = await supabase
     .from("podcasts")
-    .select("title, description, image_url, language, feed_slug")
+    .select("title, description, image_url, language, feed_slug, user_id")
     .eq("feed_slug", podcast_slug)
     .single();
 
@@ -45,6 +45,22 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
     console.error(
       "Error fetching podcast details for RSS feed:",
       podcastError,
+    );
+    return new NextResponse("Podcast not found or could not generate RSS feed", {
+      status: 404,
+    });
+  }
+
+  const { data: userData, error: userError } = await supabase
+    .from("auth.users")
+    .select("id, email")
+    .eq("id", podcastData.user_id)
+    .single();
+
+  if (userError || !userData) {
+    console.error(
+      "Error fetching podcast details for RSS feed:",
+      userError,
     );
     return new NextResponse("Podcast not found or could not generate RSS feed", {
       status: 404,
@@ -72,8 +88,8 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
       rss: `${podcastBaseUrl}/rss.xml`,
     },
     author: {
-      name: "Your Name or Podcast Host", // Replace
-      // email: "you@example.com", // Optional
+      name: podcastData.title,
+      email: userData.email,
       // link: "https://example.com/about-host", // Optional
     },
   });
@@ -109,8 +125,8 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
         content: episode.description || "", // Or full content/shownotes
         author: [
           {
-            name: "Your Name or Episode Speaker", // Potentially fetch speaker name using speaker_id
-            // email: "speaker@example.com",
+            name: podcastData.title, // Potentially fetch speaker name using speaker_id
+            email: userData.email,
             // link: "link-to-speaker-bio.com"
           },
         ],
@@ -125,7 +141,6 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
               // length: you might need to get the file size if required by some podcatchers
             }
           : undefined,
-        // You can add other iTunes specific tags here if needed, e.g.,
         // itunesAuthor: "...",
         // itunesSubtitle: "...",
         // itunesSummary: episode.description || "",
