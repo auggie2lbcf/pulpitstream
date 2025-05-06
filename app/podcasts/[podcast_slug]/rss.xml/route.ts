@@ -69,8 +69,23 @@ export async function GET(
       name: `${profileData.first_name} ${profileData.last_name}`,
       email: profileData.email,
     },
-    
   });
+
+  feed.addExtension({
+    name: 'itunes',
+    objects: {
+      owner: {
+        name: `${profileData.first_name} ${profileData.last_name}`,
+        email: profileData.email
+      },
+      author: `${profileData.first_name} ${profileData.last_name}`,
+      categories: ['Religion & Spirituality'],
+      explicit: false,
+      image: podcastData.image_url || `${siteUrl}/image.png`,
+      summary: podcastData.description || "",
+      type: 'episodic'
+    }
+  })
 
   const { data: episodes, error: episodesError } = await supabase
     .from("episodes")
