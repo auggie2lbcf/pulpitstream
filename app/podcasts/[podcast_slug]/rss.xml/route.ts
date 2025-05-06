@@ -76,7 +76,7 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
     title: podcastData.title || "My Podcast",
     description: podcastData.description || "Episodes from my podcast",
     id: podcastBaseUrl + "/", // Unique ID for the feed
-    link: podcastBaseUrl, // Link to the podcast page
+    link: podcastBaseUrl + "/rss.xml", // Link to the podcast page
     language: podcastData.language || "en",
     image: podcastData.image_url || `${siteUrl}/image.png`, // Fallback image
     favicon: `${siteUrl}/favicon.ico`,
