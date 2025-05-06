@@ -118,6 +118,20 @@ export async function GET(
     headers: {
       "Content-Type": "application/rss+xml; charset=utf-8",
       "Cache-Control": "public, s-maxage=600, stale-while-revalidate=300",
+      "Content-Length": Buffer.byteLength(feed.rss2()).toString(),
+      "ETag": `"${podcast_slug}"`,
+      "Last-Modified": new Date().toUTCString(),
+      "Access-Control-Allow-Origin": "*", // CORS header
+      "Access-Control-Allow-Methods": "GET, OPTIONS", // CORS header
+      "Access-Control-Allow-Headers": "Content-Type, Authorization", // CORS header
+      "Access-Control-Max-Age": "86400", // CORS header
+      "Access-Control-Expose-Headers": "ETag, Last-Modified", // CORS header
+      "Access-Control-Allow-Credentials": "true", // CORS header
+      "Access-Control-Allow-Private-Network": "true", // CORS header
+      "Access-Control-Allow-Client-Certificate": "true", // CORS header
+      "Access-Control-Allow-Preflight": "true", // CORS header
+      "Access-Control-Allow-Request-Headers": "Content-Type, Authorization", //
+      "Access-Control-Allow-Request-Method": "GET, OPTIONS", // CORS header
     },
   });
 }
