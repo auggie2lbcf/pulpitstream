@@ -79,7 +79,7 @@ export async function GET(
         email: profileData.email
       },
       author: `${profileData.first_name} ${profileData.last_name}`,
-      categories: ['Religion & Spirituality'],
+      category: ['Religion & Spirituality'],
       explicit: false,
       image: podcastData.image_url || `${siteUrl}/image.png`,
       summary: podcastData.description || "",
