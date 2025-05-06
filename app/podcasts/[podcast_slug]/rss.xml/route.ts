@@ -122,12 +122,13 @@ export async function GET(
         content: episode.description,
         author: [
           {
-            name: episode.speaker_id || podcastData.title,
+        name: episode.speaker_id || podcastData.title,
           },
         ],
         date: new Date(episode.date),
         enclosure: {
           url: escapeXmlUrl(episode.audio_url),
+          type: "audio/m4a",
           length: episode.audio_url.length,
         },
       });
@@ -142,7 +143,7 @@ export async function GET(
     link: "https://example.com/johancruyff"
   });
 
-  return new NextResponse(feed.atom1(), {
+  return new NextResponse(feed.rss2(), {
     headers: {
       "Content-Type": "application/rss+xml; charset=utf-8",
       "Cache-Control": "public, s-maxage=600, stale-while-revalidate=300",
