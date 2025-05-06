@@ -15,6 +15,12 @@ type PodcastFeedParams = Promise<{
   podcast_slug: string;
 }>;
 
+export const runtime = 'edge';
+
+type PodcastFeedParams = Promise<{
+  podcast_slug: string;
+}>;
+
 export async function GET(
   request: Request,
   { params }: { params: PodcastFeedParams },
