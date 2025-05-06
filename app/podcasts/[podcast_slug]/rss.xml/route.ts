@@ -9,9 +9,19 @@ type PodcastEpisodePageProps = Promise<{
 
 export const runtime = 'edge';
 
+export const runtime = 'edge';
+
+type PodcastFeedParams = Promise<{
+  podcast_slug: string;
+}>;
+
 export async function GET(
-  request: NextRequest,
-  {  params } : { params : PodcastEpisodePageProps }) {
+  request: Request,
+  { params }: { params: PodcastFeedParams },
+) {
+  // Get the podcast_slug from the dynamic route parameters
+  const podcastSlug = await params;
+
   const supabase = await createClient();
   const { podcast_slug } = await params;
 
@@ -74,21 +84,40 @@ export async function GET(
     ]
   });
 
-  // 4. Add episodes as items to the feed
-  episodesData?.forEach(episode => {
-    feed.item({
-      title: episode.title,
-      description: episode.description || '',
-      url: `${siteUrl}/podcast/${podcast_slug}/episode/${episode.episode_slug}`, // URL to the episode page
-      guid: episode.id.toString(), // A unique ID for the episode
-      date: episode.date,
-      enclosure: {
-        url: episode.audio_url,
-        type: 'audio/mpeg', // Adjust based on your audio file type
-        // size: episode.audio_size, // Optional: file size in bytes
-      },
-      author: episode.speaker_id || 'Podcast Author', // You might want to fetch speaker details
-      // You can add more fields like 'itunes:duration', 'itunes:image', etc.
+      feed.addItem({
+        title: episode.title,
+        id: episodeUrl,
+        link: episodeUrl, // Consider escaping this URL as well if it might contain special characters
+        description: episode.description || "",
+        content: episode.description || "", // Or full content/shownotes
+        author: [
+          {
+            name: "Your Name or Episode Speaker", // Potentially fetch speaker name using speaker_id
+            // email: "speaker@example.com",
+            // link: "link-to-speaker-bio.com"
+          },
+        ],
+        date: new Date(episode.date),
+        image: episode.image_url || podcastData.image_url || "/image.png", // Episode image, fallback to podcast image
+        enclosure: escapedAudioUrl
+          ? {
+              url: escapedAudioUrl,
+              type: episode.audio_url.endsWith(".m4a")
+                ? "audio/x-m4a"
+                : "audio/mpeg", // Basic type detection, adjust as needed
+              // length: you might need to get the file size if required by some podcatchers
+            }
+          : undefined,
+        // You can add other iTunes specific tags here if needed, e.g.,
+        // itunesAuthor: "...",
+        // itunesSubtitle: "...",
+        // itunesSummary: episode.description || "",
+        // itunesDuration: "HH:MM:SS", // if you have duration data
+        // itunesExplicit: false,
+        // itunesImage: episode.image_url || podcastData.image_url || undefined,
+        // itunesEpisode: episode.episode_num, // If you have episode numbers
+        // itunesSeason: ..., // If you have season numbers
+      });
     });
   });
 
