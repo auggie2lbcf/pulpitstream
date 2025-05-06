@@ -12,6 +12,7 @@ function escapeXmlUrl(url: string): string {
     .replace(/'/g, "&apos;");
 }
 
+export const runtime = 'edge';
 
 type PodcastFeedProps = Promise<{
   podcast_slug: string;
