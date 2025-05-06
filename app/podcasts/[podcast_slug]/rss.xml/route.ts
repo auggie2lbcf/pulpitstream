@@ -67,6 +67,7 @@ export async function GET(
       name: `${profileData.first_name} ${profileData.last_name}`,
       email: profileData.email,
     },
+    
   });
 
   const { data: episodes, error: episodesError } = await supabase
@@ -99,10 +100,19 @@ export async function GET(
         enclosure: {
           url: escapeXmlUrl(episode.audio_url),
           type: "audio/mpeg",
+          length: episode.audio_url.length,
         },
       });
     });
   }
+
+  feed.addCategory("Technologie"); //TODO: Add dynamic categories
+
+  feed.addContributor({ //TODO: Add dynamic categories
+    name: "Johan Cruyff",
+    email: "johancruyff@example.com",
+    link: "https://example.com/johancruyff"
+  });
 
   return new NextResponse(feed.rss2(), {
     headers: {
