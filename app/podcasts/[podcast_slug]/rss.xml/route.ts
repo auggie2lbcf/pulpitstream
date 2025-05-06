@@ -12,12 +12,16 @@ function escapeXmlUrl(url: string): string {
     .replace(/'/g, "&apos;");
 }
 
+type PodcastFeedParams = Promise<{
+  podcast_slug: string;
+}>;
+
 export async function GET(
   request: Request,
-  { params }: { params: { podcast_slug: string } },
+  { params }: { params: PodcastFeedParams },
 ) {
   // Get the podcast_slug from the dynamic route parameters
-  const podcastSlug = params.podcast_slug;
+  const podcastSlug = await params;
 
   const supabase = await createClient();
 
