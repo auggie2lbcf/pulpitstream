@@ -51,16 +51,16 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
     });
   }
 
-  const { data: userData, error: userError } = await supabase
-    .from("auth.users")
+  const { data: profileData, error: profileError } = await supabase
+    .from("profiles")
     .select("id, email")
     .eq("id", podcastData.user_id)
     .single();
 
-  if (userError || !userData) {
+  if (profileError || !profileData) {
     console.error(
-      "Error fetching podcast details for RSS feed:",
-      userError,
+      "Error fetching profile details for RSS feed:",
+      profileError,
     );
     return new NextResponse("Podcast not found or could not generate RSS feed", {
       status: 404,
@@ -78,7 +78,7 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
     id: podcastBaseUrl + "/", // Unique ID for the feed
     link: podcastBaseUrl, // Link to the podcast page
     language: podcastData.language || "en",
-    image: podcastData.image_url || `${siteUrl}/default-podcast-image.png`, // Fallback image
+    image: podcastData.image_url || `${siteUrl}/image.png`, // Fallback image
     favicon: `${siteUrl}/favicon.ico`,
     copyright: `All rights reserved ${new Date().getFullYear()}, Your Name or Company`,
     updated: new Date(), // Or use the date of the latest episode
@@ -89,7 +89,7 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
     },
     author: {
       name: podcastData.title,
-      email: userData.email,
+      email: profileData.email,
       // link: "https://example.com/about-host", // Optional
     },
   });
@@ -126,7 +126,7 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
         author: [
           {
             name: podcastData.title, // Potentially fetch speaker name using speaker_id
-            email: userData.email,
+            email: profileData.email,
             // link: "link-to-speaker-bio.com"
           },
         ],
