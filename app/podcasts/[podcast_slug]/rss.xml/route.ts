@@ -58,7 +58,7 @@ export async function GET(
     link: podcastBaseUrl,
     language: podcastData.language || "en",
     favicon: `${siteUrl}/favicon.ico`,
-    image: podcastData.image_url || `${siteUrl}/image.png`,
+    image: podcastData.image_url || `https://${siteUrl}/image.png`,
     updated: new Date(),
     generator: "Feed for Next.js",
     copyright: `Copyright © ${new Date().getFullYear()} ${profileData.first_name} ${profileData.last_name}`,
@@ -104,7 +104,7 @@ export async function GET(
       const episodeUrl = `${podcastBaseUrl}/${episode.episode_slug}`;
       feed.addItem({
         title: episode.title,
-        id: episode.episode_slug,
+        id: episodeUrl,
         link: escapeXmlUrl(episode.audio_url),
         description: episode.description?.replace(/<[^>]*>?/gm, "").substring(0, 255),
         content: episode.description,
@@ -116,7 +116,6 @@ export async function GET(
         date: new Date(episode.date),
         enclosure: {
           url: escapeXmlUrl(episode.audio_url),
-          type: "audio/mpeg",
           length: episode.audio_url.length,
         },
       });
