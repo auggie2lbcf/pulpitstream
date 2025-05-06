@@ -25,7 +25,7 @@ export default async function PodcastEpisodesListPage({ params } : { params : Po
   // Fetch episodes - select fields needed for the list
   const { data: episodes, error: episodesError } = await supabase
     .from("episodes")
-    .select("id, title, description, date, episode_num, season_num") // Removed audio_url, duration from select
+    .select("episode_slug, title, description, date, episode_num, series") // Removed audio_url, duration from select
     .eq("podcast_slug", podcast_slug)
     .order("date", { ascending: false });
 
@@ -66,8 +66,8 @@ export default async function PodcastEpisodesListPage({ params } : { params : Po
           {episodes.map((episode) => (
             // Link wrapping the episode details
             <Link
-              href={`/podcasts/${podcast_slug}/${episode.id}`} // Link to the specific episode page
-              key={episode.id}
+              href={`/podcasts/${podcast_slug}/${episode.episode_slug}`} // Link to the specific episode page
+              key={episode.episode_slug}
               className="block hover:bg-muted/50 transition-colors duration-150 rounded-lg border border-border p-4 shadow-sm" // Make the whole item clickable and styled
             >
               <div>
@@ -75,10 +75,10 @@ export default async function PodcastEpisodesListPage({ params } : { params : Po
                   {episode.title ?? "Untitled Episode"}
                 </h3>
                 <div className="text-sm text-muted-foreground mb-2">
-                   {/* Display date and season/episode number */}
+                   {/* Display date and series/episode number */}
                   {episode.date ? new Date(episode.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ""}
-                  {(episode.season_num || episode.episode_num) && <span className="mx-2">|</span>}
-                  {(episode.season_num || episode.episode_num) && `S${episode.season_num ?? '?'} E${episode.episode_num ?? '?'}`}
+                  {(episode.series || episode.episode_num) && <span className="mx-2">|</span>}
+                  {(episode.series || episode.episode_num) && `S${episode.series ?? '?'} E${episode.episode_num ?? '?'}`}
                 </div>
                  {/* Show a snippet of the description */}
                 <p className="text-sm text-foreground line-clamp-2">

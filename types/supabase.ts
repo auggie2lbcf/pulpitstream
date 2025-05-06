@@ -9,45 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      episodes: {
+      episodes: {                       // Table for podcast episodes
         Row: {
-          audio_url: string | null
-          date: string | null
-          description: string | null
-          duration: string | null
-          episode_num: number | null
-          id: number
-          passage: string | null
-          podcast_slug: string
-          season_num: number | null
-          speaker_id: string | null
-          title: string | null
+          audio_url: string             //Cloudflare R2 URL
+          date: string                  // Date of the episode
+          description: string | null    // Episode description
+          episode_num: number | null    // Episode number
+          episode_slug: string          // UUID v7
+          id: number                    // PK
+          passage: string | null        // Bible passage
+          podcast_slug: string          // FK to podcasts table
+          series: string | null         // Series name    
+          speaker_id: string | null     // FK to speakers table 
+          title: string
         }
         Insert: {
-          audio_url?: string | null
-          date?: string | null
+          audio_url: string
+          date: string
           description?: string | null
-          duration?: string | null
           episode_num?: number | null
+          episode_slug?: string
           id?: number
           passage?: string | null
           podcast_slug: string
-          season_num?: number | null
+          series?: string | null
           speaker_id?: string | null
-          title?: string | null
+          title: string
         }
         Update: {
-          audio_url?: string | null
-          date?: string | null
+          audio_url?: string
+          date?: string
           description?: string | null
-          duration?: string | null
           episode_num?: number | null
+          episode_slug?: string
           id?: number
           passage?: string | null
           podcast_slug?: string
-          season_num?: number | null
+          series?: string | null
           speaker_id?: string | null
-          title?: string | null
+          title?: string
         }
         Relationships: [
           {
@@ -104,18 +104,21 @@ export type Database = {
           first_name: string
           id: string
           last_name: string | null
+          speaker_slug: string | null
           user_id: string | null
         }
         Insert: {
           first_name: string
           id?: string
           last_name?: string | null
+          speaker_slug?: string | null
           user_id?: string | null
         }
         Update: {
           first_name?: string
           id?: string
           last_name?: string | null
+          speaker_slug?: string | null
           user_id?: string | null
         }
         Relationships: []
@@ -125,7 +128,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_uuid_v7: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

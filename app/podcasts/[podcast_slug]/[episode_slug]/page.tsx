@@ -9,7 +9,7 @@ export const runtime = 'edge';
 
 type EpisodePlayerPageProps = Promise<{
   podcast_slug: string;
-  episode_id: string;
+  episode_slug: string;
 }>;
 
 // Define type for the joined query result
@@ -18,16 +18,9 @@ type EpisodeWithPodcast = Database['public']['Tables']['episodes']['Row'] & {
   };
 
 export default async function EpisodePlayerPage({ params }: {params: EpisodePlayerPageProps }) {
-  const { podcast_slug, episode_id } = await params;
+  const { podcast_slug, episode_slug } = await params;
   
   const supabase = await createClient();
-
-  // Validate episode_id is a number before querying
-  const episodeIdNumber = parseInt(episode_id, 10);
-  if (isNaN(episodeIdNumber)) {
-    console.error("Invalid episode ID:", episode_id);
-    notFound();
-  }
 
   // Fetch the specific episode and include podcast title/image for context
   const { data: episode, error } = await supabase
@@ -36,7 +29,7 @@ export default async function EpisodePlayerPage({ params }: {params: EpisodePlay
       *,
       podcasts ( title, image_url )
     `)
-    .eq("id", episodeIdNumber)
+    .eq("episode_slug", episode_slug) // Assuming episode_slug is the ID
     .eq("podcast_slug", podcast_slug)
     .single<EpisodeWithPodcast>();
 
@@ -77,13 +70,6 @@ export default async function EpisodePlayerPage({ params }: {params: EpisodePlay
              <p className="text-base text-muted-foreground mb-2">
                From: <Link href={`/podcasts/${podcast_slug}`} className="hover:underline font-medium">{podcastInfo?.title ?? 'Podcast'}</Link>
              </p>
-            <p className="text-sm text-muted-foreground">
-                {episode.date ? new Date(episode.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ""}
-                {episode.duration && <span className="mx-2">|</span>}
-                {episode.duration && `Duration: ${episode.duration}`}
-                 {(episode.season_num || episode.episode_num) && <span className="mx-2">|</span>}
-                 {(episode.season_num || episode.episode_num) && `S${episode.season_num ?? '?'} E${episode.episode_num ?? '?'}`}
-            </p>
            </div>
       </div>
 
@@ -113,13 +99,3 @@ export default async function EpisodePlayerPage({ params }: {params: EpisodePlay
     </div>
   );
 }
-
-// Optional: Generate static paths if you have a predictable set of episodes
-// export async function generateStaticParams() {
-//    const supabase = await createClient();
-//    const { data: episodes } = await supabase.from('episodes').select('id, podcast_slug');
-//    return episodes?.map(({ id, podcast_slug }) => ({
-//      podcast_slug: podcast_slug,
-//      episode_id: id.toString(), // Ensure ID is a string for params
-//    })) || [];
-// }
