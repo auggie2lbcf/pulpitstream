@@ -72,7 +72,7 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `http://localhost:3000`; // Replace with your actual site URL or env variable
   const podcastBaseUrl = `${siteUrl}/podcasts/${podcastData.feed_slug}`;
 
-  const feed = new Feed({
+  const podcastFeed = new Feed({
     title: podcastData.title || "My Podcast",
     description: podcastData.description || "Episodes from my podcast",
     id: podcastBaseUrl + "/", // Unique ID for the feed
@@ -117,9 +117,9 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
         escapedAudioUrl = escapeXmlUrl(escapedAudioUrl);
       }
 
-      feed.addItem({
+      podcastFeed.addItem({
         title: episode.title,
-        id: episodeUrl,
+        id: episodeUrl, // Unique ID for the episode
         link: episodeUrl, // Consider escaping this URL as well if it might contain special characters
         description: episode.description || "",
         content: episode.description || "", // Or full content/shownotes
@@ -127,7 +127,7 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
           {
             name: podcastData.title, // Potentially fetch speaker name using speaker_id
             email: profileData.email,
-            // link: "link-to-speaker-bio.com"
+            link: "link-to-speaker-bio.com"
           },
         ],
         date: new Date(episode.date),
@@ -138,22 +138,15 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
               type: episode.audio_url.endsWith(".m4a")
                 ? "audio/x-m4a"
                 : "audio/mpeg", // Basic type detection, adjust as needed
-              // length: you might need to get the file size if required by some podcatchers
+              length: episode.audio_url.length, // Length in bytes, if known
             }
           : undefined,
-        // itunesAuthor: "...",
-        // itunesSubtitle: "...",
-        // itunesSummary: episode.description || "",
-        // itunesDuration: "HH:MM:SS", // if you have duration data
-        // itunesExplicit: false,
-        // itunesImage: episode.image_url || podcastData.image_url || undefined,
-        // itunesEpisode: episode.episode_num, // If you have episode numbers
-        // itunesSeason: ..., // If you have season numbers
+        
       });
     });
   }
 
-  return new NextResponse(feed.rss2(), {
+  return new NextResponse(podcastFeed.rss2(), {
     headers: {
       "Content-Type": "application/rss+xml; charset=utf-8", // Correct MIME type for RSS
     },
