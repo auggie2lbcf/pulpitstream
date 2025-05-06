@@ -56,7 +56,7 @@ export async function GET(
     link: podcastBaseUrl,
     language: podcastData.language || "en",
     favicon: `${siteUrl}/favicon.ico`,
-    image: podcastData.image_url || `${siteUrl}/default-image.png`,
+    image: podcastData.image_url || `${siteUrl}/image.png`,
     updated: new Date(),
     generator: "Feed for Next.js",
     copyright: `Copyright © ${new Date().getFullYear()} ${profileData.first_name} ${profileData.last_name}`,
