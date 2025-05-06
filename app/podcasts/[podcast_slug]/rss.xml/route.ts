@@ -7,7 +7,7 @@ type PodcastEpisodePageProps = Promise<{
     podcast_slug: string;
 }>;
 
-const runtime = 'edge';
+export const runtime = 'edge';
 
 export async function GET(
   request: NextRequest,
