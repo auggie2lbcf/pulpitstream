@@ -50,8 +50,9 @@ export async function GET(
 
   const podcastBaseUrl = `https://${siteUrl}/podcasts/${podcastData.feed_slug}`;
   const podcastFeedUrl = `${podcastBaseUrl}/feed.xml`;
+  
 
-  const feed = new Feed({
+  var feed = new Feed({
     title: podcastData.title,
     description: podcastData.description || "",
     id: podcastBaseUrl,
@@ -64,6 +65,8 @@ export async function GET(
     copyright: `Copyright © ${new Date().getFullYear()} ${profileData.first_name} ${profileData.last_name}`,
     feedLinks: {
       rss2: podcastFeedUrl,
+      self: podcastFeedUrl,
+      atom: podcastFeedUrl,
     },
     author: {
       name: `${profileData.first_name} ${profileData.last_name}`,
