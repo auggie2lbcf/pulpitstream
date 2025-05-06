@@ -109,7 +109,7 @@ export async function GET(
           },
         ],
         date: new Date(episode.date),
-        image: episode.image_url || podcastData.image_url || undefined, // Episode image, fallback to podcast image
+        image: episode.image_url || podcastData.image_url || "/image.png", // Episode image, fallback to podcast image
         enclosure: escapedAudioUrl
           ? {
               url: escapedAudioUrl,
