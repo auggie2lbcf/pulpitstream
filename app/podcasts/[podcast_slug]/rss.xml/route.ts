@@ -48,7 +48,7 @@ export async function GET(
     return new NextResponse("Author not found", { status: 404 });
   }
 
-  const podcastBaseUrl = `${siteUrl}/podcasts/${podcastData.feed_slug}`;
+  const podcastBaseUrl = `https://${siteUrl}/podcasts/${podcastData.feed_slug}`;
   const podcastFeedUrl = `${podcastBaseUrl}/feed.xml`;
 
   const feed = new Feed({
