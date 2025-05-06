@@ -57,7 +57,7 @@ export async function GET(
     id: podcastBaseUrl,
     link: podcastBaseUrl,
     language: podcastData.language || "en",
-    favicon: `${siteUrl}/favicon.ico`,
+    // favicon: `${siteUrl}/favicon.ico`,
     image: podcastData.image_url || `https://${siteUrl}/image.png`,
     updated: new Date(),
     generator: "Feed for Next.js",
@@ -79,9 +79,21 @@ export async function GET(
         email: profileData.email
       },
       author: `${profileData.first_name} ${profileData.last_name}`,
-      category: ['Religion & Spirituality'],
+      category: ['Religion &amp; Spirituality'],
       explicit: false,
-      image: podcastData.image_url || `${siteUrl}/image.png`,
+      image: podcastData.image_url || `https://${siteUrl}/image.png`,
+      summary: podcastData.description || "",
+      type: 'episodic'
+    }
+  })
+
+  feed.addExtension({
+    name: 'podcast',
+    objects: {
+      author: `${profileData.first_name} ${profileData.last_name}`,
+      category: ['Religion &amp; Spirituality'],
+      explicit: false,
+      image: podcastData.image_url || `https://${siteUrl}/image.png`,
       summary: podcastData.description || "",
       type: 'episodic'
     }
@@ -130,7 +142,7 @@ export async function GET(
     link: "https://example.com/johancruyff"
   });
 
-  return new NextResponse(feed.rss2(), {
+  return new NextResponse(feed.atom1(), {
     headers: {
       "Content-Type": "application/rss+xml; charset=utf-8",
       "Cache-Control": "public, s-maxage=600, stale-while-revalidate=300",
