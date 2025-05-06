@@ -12,12 +12,14 @@ function escapeXmlUrl(url: string): string {
     .replace(/'/g, "&apos;");
 }
 
-export async function GET(
-  request: Request,
-  { params }: { params: { podcast_slug: string } },
-) {
+
+type PodcastFeedProps = Promise<{
+  podcast_slug: string;
+}>;
+
+export async function GET( request: Request,{ params } : { params : PodcastFeedProps }) {
   // Get the podcast_slug from the dynamic route parameters
-  const podcastSlug = params.podcast_slug;
+  const { podcast_slug } = await params;
 
   const supabase = await createClient();
 
@@ -25,7 +27,7 @@ export async function GET(
   const { data: podcastData, error: podcastError } = await supabase
     .from("podcasts")
     .select("title, description, image_url, language, feed_slug")
-    .eq("feed_slug", podcastSlug)
+    .eq("feed_slug", podcast_slug)
     .single();
 
   if (podcastError || !podcastData) {
@@ -72,7 +74,7 @@ export async function GET(
     .select(
       "title, episode_slug, description, date, audio_url, image_url, passage, series, speaker_id",
     )
-    .eq("podcast_slug", podcastSlug)
+    .eq("podcast_slug", podcast_slug)
     .order("date", { ascending: false });
 
   if (episodesError) {
