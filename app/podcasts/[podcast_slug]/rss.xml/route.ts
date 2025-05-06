@@ -87,7 +87,7 @@ export async function GET(
       feed.addItem({
         title: episode.title,
         id: episodeUrl,
-        link: episodeUrl,
+        link: escapeXmlUrl(episode.audio_url),
         description: episode.description?.replace(/<[^>]*>?/gm, "").substring(0, 255),
         content: episode.description,
         author: [
