@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link"; // Import Link
 import { notFound } from "next/navigation";
 
+export const runtime = 'edge';
+
 
 type PodcastEpisodePageProps = Promise<{
     podcast_slug: string;

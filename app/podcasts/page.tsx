@@ -3,6 +3,8 @@ import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import Image from "next/image";
 
+export const runtime = 'edge';
+
 export default async function PodcastsPage() {
   const supabase = await createClient();
   const { data: podcasts, error } = await supabase
