@@ -127,11 +127,11 @@ export async function GET( request: Request,{ params } : { params : PodcastFeedP
         author: [{
           name: podcastData.title,
           email: profileData.email,
-          link: "https://example.com/about-host",
+          // link: "https://example.com/about-host",
         },],
         category: episode.series,
         date: new Date(episode.date),
-        image: episode.image_url || podcastData.image_url || `${siteUrl}/image.png`, // Episode image, fallback to podcast image
+        // image: episode.image_url || podcastData.image_url || `${siteUrl}/image.png`, // Episode image, fallback to podcast image
         enclosure: escapedAudioUrl
           ? {
               url: escapedAudioUrl,
