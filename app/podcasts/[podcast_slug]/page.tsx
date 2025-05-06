@@ -4,13 +4,12 @@ import Image from "next/image";
 import Link from "next/link"; // Import Link
 import { notFound } from "next/navigation";
 
-type PodcastEpisodePageProps = {
-  params: {
-    podcast_slug: string;
-  };
-};
 
-export default async function PodcastEpisodesListPage({ params }: PodcastEpisodePageProps) { // Renamed component for clarity
+type PodcastEpisodePageProps = Promise<{
+    podcast_slug: string;
+}>;
+
+export default async function PodcastEpisodesListPage({ params } : { params : PodcastEpisodePageProps }) { // Renamed component for clarity
   const supabase = await createClient();
   const { podcast_slug } = await params;
 
