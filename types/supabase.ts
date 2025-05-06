@@ -9,18 +9,19 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      episodes: {                       // Table for podcast episodes
+      episodes: {
         Row: {
-          audio_url: string             //Cloudflare R2 URL
-          date: string                  // Date of the episode
-          description: string | null    // Episode description
-          episode_num: number | null    // Episode number
-          episode_slug: string          // UUID v7
-          id: number                    // PK
-          passage: string | null        // Bible passage
-          podcast_slug: string          // FK to podcasts table
-          series: string | null         // Series name    
-          speaker_id: string | null     // FK to speakers table 
+          audio_url: string
+          date: string
+          description: string | null
+          episode_num: number | null
+          episode_slug: string
+          id: number
+          image_url: string | null
+          passage: string | null
+          podcast_slug: string
+          series: string | null
+          speaker_id: string | null
           title: string
         }
         Insert: {
@@ -30,6 +31,7 @@ export type Database = {
           episode_num?: number | null
           episode_slug?: string
           id?: number
+          image_url?: string | null
           passage?: string | null
           podcast_slug: string
           series?: string | null
@@ -43,6 +45,7 @@ export type Database = {
           episode_num?: number | null
           episode_slug?: string
           id?: number
+          image_url?: string | null
           passage?: string | null
           podcast_slug?: string
           series?: string | null
