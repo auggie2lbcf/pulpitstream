@@ -71,6 +71,14 @@ export async function GET(
     name: "podcast:explicit",
     objects: podcastData.explicit ? "yes" : "no",
   });
+  feed.addExtension({
+    name: "itunes:image",
+    objects: podcastData.image_url,
+  });
+  feed.addExtension({
+    name: "itunes:category",
+    objects: "Religion",
+  });
 
   const { data: episodes, error: episodesError } = await supabase
     .from("episodes")
