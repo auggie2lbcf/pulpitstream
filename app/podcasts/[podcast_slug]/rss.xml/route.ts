@@ -1,7 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
-import { Tables } from "@/types/supabase";
-import { Podcast } from "podcast";
 import { Feed } from "feed";
 
 export const runtime = "edge";
@@ -40,11 +38,10 @@ export async function GET(
     console.error("Error fetching podcast:", podcastError);
     console.error("Podcast not found for slug:", podcast_slug);
     return new NextResponse("Podcast not found", { status: 404 });
-  }
+  }   
 
   const podcastBaseUrl = `https://${siteUrl}/podcasts/${podcastData.podcast_slug}`;
   const podcastFeedUrl = `${podcastBaseUrl}/rss.xml`;
-
 
   const feed = new Feed({
     title: podcastData.title,
@@ -55,16 +52,43 @@ export async function GET(
     language: podcastData.language || "en",
     copyright: `Copyright © ${new Date().getFullYear()} ${podcastData.title}`,
     image: podcastData.image_url,
-    
+    feedLinks: {
+      self: podcastFeedUrl,
+      rss2: podcastFeedUrl
+    }
+  });
+
+  feed.addExtension({
+    name: "podcast",
+    objects: {
+      "podcast:author": podcastData.author,
+      "podcast:summary": podcastData.description,
+      "podcast:explicit": podcastData.explicit ? "yes" : "no",
+      "podcast:category": podcastData.category,
+      "podcast:link": podcastFeedUrl,
+      "podcast:owner": {
+        "podcast:name": podcastData.owner_name,
+        "podcast:email": podcastData.owner_email,
+      },
+      "itunes:summary": podcastData.description,
+      "itunes:author": podcastData.author,
+      "itunes:explicit": podcastData.explicit ? "yes" : "no",
+      "itunes:category": podcastData.category,
+      "itunes:owner": {
+        "itunes:name": podcastData.owner_name,
+        "itunes:email": podcastData.owner_email,
+      },
+      "itunes:image": podcastData.image_url,
+    },
   });
 
   const { data: episodes, error: episodesError } = await supabase
     .from("episodes")
     .select(
-      "title, episode_slug, description, date, audio_url, image_url, passage, series, speaker_id"
+      "*"
     )
     .eq("podcast_slug", podcast_slug)
-    .order("date", { ascending: false });
+    .order("publication_date", { ascending: false });
 
   if (episodesError) {
     console.error("Error fetching episodes:", episodesError);
@@ -72,7 +96,7 @@ export async function GET(
 
   if (episodes) {
     episodes.forEach((episode) => {
-      const episodeUrl = `${podcastBaseUrl}/${episode.episode_slug}`;
+      const episodeUrl = `${podcastBaseUrl}/${episode.guid}`;
       feed.addItem({
         title: episode.title,
         id: episodeUrl,
@@ -80,24 +104,31 @@ export async function GET(
         description: episode.description
           ?.replace(/<[^>]*>?/gm, "")
           .substring(0, 255),
-        content: episode.description,
-        date: new Date(episode.date),
+        date: new Date(episode.publication_date),
+        extensions: [{
+          name: "itunes",
+          objects: {
+            "itunes:summary": episode.description,
+            "itunes:author": podcastData.author,
+            "itunes:duration": episode.duration,
+            "itunes:explicit": podcastData.explicit ? "yes" : "no",
+            "itunes:image": episode.image_url,
+          },
+        },],
         enclosure: {
           url: escapeXmlUrl(episode.audio_url),
-          type: "audio/mpeg",
-        },
-      });
+          type: "audio/mp4",
+          length: episode.audio_length,
+        },},
+      );
     });
   }
 
-  const xml = feed.rss2();
-
-  return new NextResponse(xml, {  
+  return new NextResponse(feed.rss2(), {  
     headers: {
       "Content-Type": "application/rss+xml",
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
-      "Content-Length": Buffer.byteLength(xml).toString(),
-      "Content-Disposition": `inline; filename="${podcastData.title}.xml"`,
+      "Content-Length": Buffer.byteLength(feed.rss2()).toString(),
       "Content-Transfer-Encoding": "binary",
       "Content-Encoding": "gzip",
       "Content-Language": podcastData.language || "en",

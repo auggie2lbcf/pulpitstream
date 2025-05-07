@@ -127,9 +127,8 @@ export type Database = {
           content_encoded_html: string | null
           created_at: string | null
           description: string | null
-          enclosure_length_bytes: number
-          enclosure_mime_type: string
-          enclosure_url: string
+          enclosure_length_bytes: number | null
+          enclosure_mime_type: string | null
           episode_id: number
           guid: string | null
           itunes_duration_seconds: number | null
@@ -140,8 +139,8 @@ export type Database = {
           itunes_season_number: number | null
           itunes_summary: string | null
           podcast_slug: string
-          publication_date: string
-          title: string
+          publication_date: string | null
+          title: string | null
           updated_at: string | null
         }
         Insert: {
@@ -149,9 +148,8 @@ export type Database = {
           content_encoded_html?: string | null
           created_at?: string | null
           description?: string | null
-          enclosure_length_bytes: number
-          enclosure_mime_type: string
-          enclosure_url: string
+          enclosure_length_bytes?: number | null
+          enclosure_mime_type?: string | null
           episode_id?: number
           guid?: string | null
           itunes_duration_seconds?: number | null
@@ -162,8 +160,8 @@ export type Database = {
           itunes_season_number?: number | null
           itunes_summary?: string | null
           podcast_slug: string
-          publication_date: string
-          title: string
+          publication_date?: string | null
+          title?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -171,9 +169,8 @@ export type Database = {
           content_encoded_html?: string | null
           created_at?: string | null
           description?: string | null
-          enclosure_length_bytes?: number
-          enclosure_mime_type?: string
-          enclosure_url?: string
+          enclosure_length_bytes?: number | null
+          enclosure_mime_type?: string | null
           episode_id?: number
           guid?: string | null
           itunes_duration_seconds?: number | null
@@ -184,8 +181,8 @@ export type Database = {
           itunes_season_number?: number | null
           itunes_summary?: string | null
           podcast_slug?: string
-          publication_date?: string
-          title?: string
+          publication_date?: string | null
+          title?: string | null
           updated_at?: string | null
         }
         Relationships: [
