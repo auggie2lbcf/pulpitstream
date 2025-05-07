@@ -55,7 +55,7 @@ export async function GET(
     feedLinks: {
       self: podcastFeedUrl,
       rss2: podcastFeedUrl
-    }
+    },
   });
 
   feed.addExtension({
@@ -72,8 +72,8 @@ export async function GET(
     objects: podcastData.explicit ? "yes" : "no",
   });
   feed.addExtension({
-    name: "itunes:image",
-    objects: podcastData.image_url,
+    name: 'itunes:image href=\"' + podcastData.image_url+'\"',
+    objects: []
   });
   feed.addExtension({
     name: "itunes:category",
