@@ -2,6 +2,7 @@ import { Feed, FeedOptions } from "feed";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 import { Tables } from "@/types/supabase";
+import { Podcast } from "lucide-react";
 
 export const runtime = "edge";
 
@@ -31,8 +32,8 @@ export async function GET(
 
   const { data: podcastData, error: podcastError } = await supabase
     .from("podcasts")
-    .select("title, description, image_url, language, feed_slug, user_id")
-    .eq("feed_slug", podcast_slug)
+    .select("title, description, image_url, language, podcast_slug, user_id")
+    .eq("podcast_slug", podcast_slug)
     .single();
 
   if (podcastError || !podcastData) {
@@ -49,10 +50,14 @@ export async function GET(
     return new NextResponse("Author not found", { status: 404 });
   }
 
-  const podcastBaseUrl = `https://${siteUrl}/podcasts/${podcastData.feed_slug}`;
+  const podcastBaseUrl = `https://${siteUrl}/podcasts/${podcastData.podcast_slug}`;
   const podcastFeedUrl = `${podcastBaseUrl}/feed.xml`;
 
-  const feed = new Feed({
+  feedOptions: FeedOptions = {
+    title: podcastData.title,
+    description: podcastData.description || "",
+
+  feed = new Podcast({
     title: podcastData.title,
     description: podcastData.description || "",
     id: podcastBaseUrl,
@@ -142,7 +147,7 @@ export async function GET(
       "Content-Type": "application/rss+xml; charset=utf-8",
       "Cache-Control": "public, s-maxage=600, stale-while-revalidate=300",
       "Content-Length": Buffer.byteLength(feed.rss2()).toString(),
-      ETag: `"${podcast_slug}"`,
+      "ETag": `"${podcast_slug}"`,
       "Last-Modified": new Date().toUTCString(),
       "Access-Control-Allow-Origin": "*", // CORS header
       "Access-Control-Allow-Methods": "GET, OPTIONS", // CORS header

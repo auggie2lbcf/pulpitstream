@@ -9,7 +9,7 @@ export default async function PodcastsPage() {
   const supabase = await createClient();
   const { data: podcasts, error } = await supabase
     .from("podcasts")
-    .select("feed_slug, title, description, image_url"); // Select necessary fields
+    .select("podcast_slug, title, description, image_url"); // Select necessary fields
 
   if (error) {
     console.error("Error fetching podcasts:", error);
@@ -28,7 +28,7 @@ export default async function PodcastsPage() {
         {" "}
         {/* Adjust grid for smaller screens */}
         {podcasts.map((podcast) => (
-          <Link href={`/podcasts/${podcast.feed_slug}`} key={podcast.feed_slug}>
+          <Link href={`/podcasts/${podcast.podcast_slug}`} key={podcast.podcast_slug}>
             {/* Simple Card Structure with Tailwind */}
             <div className="bg-card text-card-foreground rounded-lg border border-border shadow-sm overflow-hidden h-full hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col">
               {" "}

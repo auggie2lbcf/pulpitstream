@@ -19,7 +19,7 @@ export default async function PodcastEpisodesListPage({ params } : { params : Po
   const { data: podcast, error: podcastError } = await supabase
     .from("podcasts")
     .select("title, description, image_url")
-    .eq("feed_slug", podcast_slug)
+    .eq("podcast_slug", podcast_slug)
     .single();
 
   // Fetch episodes - select fields needed for the list
