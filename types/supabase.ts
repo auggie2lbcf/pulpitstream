@@ -123,6 +123,7 @@ export type Database = {
       }
       episodes: {
         Row: {
+          audio_url: string | null
           content_encoded_html: string | null
           created_at: string | null
           description: string | null
@@ -130,7 +131,7 @@ export type Database = {
           enclosure_mime_type: string
           enclosure_url: string
           episode_id: number
-          guid: string
+          guid: string | null
           itunes_duration_seconds: number | null
           itunes_episode_number: number | null
           itunes_episode_type: string | null
@@ -138,13 +139,13 @@ export type Database = {
           itunes_image_url: string | null
           itunes_season_number: number | null
           itunes_summary: string | null
-          link_episode_page: string | null
-          podcast_id: number
+          podcast_slug: string
           publication_date: string
           title: string
           updated_at: string | null
         }
         Insert: {
+          audio_url?: string | null
           content_encoded_html?: string | null
           created_at?: string | null
           description?: string | null
@@ -152,7 +153,7 @@ export type Database = {
           enclosure_mime_type: string
           enclosure_url: string
           episode_id?: number
-          guid: string
+          guid?: string | null
           itunes_duration_seconds?: number | null
           itunes_episode_number?: number | null
           itunes_episode_type?: string | null
@@ -160,13 +161,13 @@ export type Database = {
           itunes_image_url?: string | null
           itunes_season_number?: number | null
           itunes_summary?: string | null
-          link_episode_page?: string | null
-          podcast_id: number
+          podcast_slug: string
           publication_date: string
           title: string
           updated_at?: string | null
         }
         Update: {
+          audio_url?: string | null
           content_encoded_html?: string | null
           created_at?: string | null
           description?: string | null
@@ -174,7 +175,7 @@ export type Database = {
           enclosure_mime_type?: string
           enclosure_url?: string
           episode_id?: number
-          guid?: string
+          guid?: string | null
           itunes_duration_seconds?: number | null
           itunes_episode_number?: number | null
           itunes_episode_type?: string | null
@@ -182,19 +183,18 @@ export type Database = {
           itunes_image_url?: string | null
           itunes_season_number?: number | null
           itunes_summary?: string | null
-          link_episode_page?: string | null
-          podcast_id?: number
+          podcast_slug?: string
           publication_date?: string
           title?: string
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "episodes_podcast_id_fkey"
-            columns: ["podcast_id"]
+            foreignKeyName: "episodes_podcast_slug_fkey"
+            columns: ["podcast_slug"]
             isOneToOne: false
             referencedRelation: "podcasts"
-            referencedColumns: ["podcast_id"]
+            referencedColumns: ["podcast_slug"]
           },
         ]
       }

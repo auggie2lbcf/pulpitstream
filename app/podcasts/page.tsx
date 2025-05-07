@@ -40,10 +40,13 @@ export default async function PodcastsPage() {
                   <Image
                     src={podcast.image_url}
                     alt={podcast.title ?? "Podcast cover art"}
-                    layout="fill"
-                    objectFit="cover" // Ensures the image covers the container
-                    className="bg-muted" // Placeholder background
-                  />
+                    // Placeholder background
+                    className="bg-muted"
+                    fill
+                    sizes="100vw"
+                    style={{
+                      objectFit: "cover"
+                    }} />
                 </div>
               )}
               <div className="p-4 flex flex-col flex-grow">
