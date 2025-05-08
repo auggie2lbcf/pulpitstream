@@ -88,7 +88,7 @@ export async function GET(
   rssFeed = rssFeed +(`\n\t\t<itunes:author>${podcastData.owner}</itunes:author>`);
   rssFeed = rssFeed +(`\n\t\t<itunes:explicit>${podcastData.explicit ? "true" : "false"}</itunes:explicit>`);
   // rssFeed = rssFeed +(`\n\t\t<itunes:category text="${podcastData.categories}">`);
-  rssFeed = rssFeed +(`\n\t\t<itunes:category text="Relgion & Spirituality">`);
+  rssFeed = rssFeed +(`\n\t\t<itunes:category text="Relgion &amp; Spirituality">`);
   rssFeed = rssFeed +(`\n\t\t\t<itunes:category text="Religion"/>`);
   rssFeed = rssFeed +(`\n\t\t</itunes:category>`);
   rssFeed = rssFeed +(`\n\t\t<itunes:owner>`);
