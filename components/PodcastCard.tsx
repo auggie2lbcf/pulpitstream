@@ -23,8 +23,7 @@ export function PodcastCard({ podcast, className }: PodcastCardProps) {
   const podcastLink = `/podcasts/${podcast_slug}`; //
 
   return (
-    <Link href={podcastLink} passHref legacyBehavior>
-      <a className={cn("block hover:no-underline group", className)}>
+    <Link href={podcastLink} passHref>
         <Card className="bg-card text-card-foreground border-border w-full overflow-hidden h-full flex flex-col group-hover:border-primary transition-colors duration-150"> {/* */}
           <div className="relative aspect-video w-full">
             <Image
@@ -53,7 +52,6 @@ export function PodcastCard({ podcast, className }: PodcastCardProps) {
             tags or other info
           </CardContent> */}
         </Card>
-      </a>
     </Link>
   );
 }
