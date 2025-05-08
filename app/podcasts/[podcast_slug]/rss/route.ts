@@ -53,11 +53,11 @@ export async function GET(
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `http://localhost:3000`;
   const podcastBaseUrl = `https://${siteUrl}/podcasts/${podcastData.podcast_slug}`;
-  const podcastFeedUrl = `${podcastBaseUrl}/rss.xml`;
+  const podcastFeedUrl = `${podcastBaseUrl}/rss`;
 
 
   var rssFeed = `<?xml version="1.0" encoding="UTF-8"?>`;
-  rssFeed = rssFeed + (`<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:anchor="https://anchor.fm/xmlns" xmlns:podcast="https://podcastindex.org/namespace/1.0">`
+  rssFeed = rssFeed + (`<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">`
   );
   rssFeed = rssFeed +(`\t<channel>`);
   rssFeed = rssFeed +(`\t\t<title>${podcastData.title}</title>`);
@@ -88,11 +88,10 @@ export async function GET(
   rssFeed = rssFeed +(`\t\t</itunes:owner>`);
   rssFeed = rssFeed +(`\t\t<itunes:link>${podcastBaseUrl}</itunes:link>`);
   rssFeed = rssFeed +(`\t\t<itunes:image href="${podcastData.image_url}"/>`);
-  rssFeed = rssFeed +(`\t\t<atom:link href="${podcastFeedUrl}" rel="self" type="application/rss+xml"/>`);
-  rssFeed = rssFeed +(`\t\t<anchor:link href="${podcastFeedUrl}" rel="self" type="application/rss+xml"/>`);
-  rssFeed = rssFeed +(`\t\t<podcast:link href="${podcastFeedUrl}" rel="self" type="application/rss+xml"/>`);
+  rssFeed = rssFeed +(`\t\t<atom:link href="${podcastFeedUrl}" rel="self" type="application/rss"/>`);
+  rssFeed = rssFeed +(`\t\t<anchor:link href="${podcastFeedUrl}" rel="self" type="application/rss"/>`);
+  rssFeed = rssFeed +(`\t\t<podcast:link href="${podcastFeedUrl}" rel="self" type="application/rss+"/>`);
   rssFeed = rssFeed +(`\t\t<generator>PulpitStream.com</generator>`);
-  rssFeed = rssFeed +(`\t\t<docs>https://podcastindex.org/docs/1.0</docs>`);
 
   if (episodes) {
     for (const episode of episodes) {
@@ -122,7 +121,7 @@ export async function GET(
 
   return new NextResponse(rssFeed, {  
     headers: {
-      "Content-Type": "application/rss+xml",
+      "Content-Type": "application/rss",
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
   }},);
 }
