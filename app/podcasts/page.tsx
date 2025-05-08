@@ -28,10 +28,7 @@ export default async function PodcastsPage() {
         {" "}
         {/* Adjust grid for smaller screens */}
         {podcasts.map((podcast) => (
-          <Link
-            href={`/podcasts/${podcast.podcast_slug}`}
-            key={podcast.podcast_slug}
-            legacyBehavior>
+          <Link href={`/podcasts/${podcast.podcast_slug}`} key={podcast.podcast_slug}>
             {/* Simple Card Structure with Tailwind */}
             <div className="bg-card text-card-foreground rounded-lg border border-border shadow-sm overflow-hidden h-full hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col">
               {" "}
