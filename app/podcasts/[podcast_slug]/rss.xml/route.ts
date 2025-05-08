@@ -15,6 +15,14 @@ function escapeXmlUrl(url: string): string {
     .replace(/\s/g, "%20");
 }
 
+function escapeXml(url: string): string {
+  return url
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+}
+
 type PodcastFeedProps = Promise<{
   podcast_slug: string;
 }>;
@@ -78,8 +86,9 @@ export async function GET(
   rssFeed = rssFeed +(`\n\t\t</image>`);
   rssFeed = rssFeed +(`\n\t\t<itunes:summary>${podcastData.description}</itunes:summary>`);
   rssFeed = rssFeed +(`\n\t\t<itunes:author>${podcastData.owner}</itunes:author>`);
-  rssFeed = rssFeed +(`\n\t\t<itunes:explicit>${podcastData.explicit ? "yes" : "no"}</itunes:explicit>`);
-  rssFeed = rssFeed +(`\n\t\t<itunes:category text="${podcastData.categories}">`);
+  rssFeed = rssFeed +(`\n\t\t<itunes:explicit>${podcastData.explicit ? "true" : "false"}</itunes:explicit>`);
+  // rssFeed = rssFeed +(`\n\t\t<itunes:category text="${podcastData.categories}">`);
+  rssFeed = rssFeed +(`\n\t\t<itunes:category text="Relgion">`);
   rssFeed = rssFeed +(`\n\t\t\t<itunes:category text="${podcastData.subcategory}"/>`);
   rssFeed = rssFeed +(`\n\t\t</itunes:category>`);
   rssFeed = rssFeed +(`\n\t\t<itunes:owner>`);
@@ -99,14 +108,14 @@ export async function GET(
       const episodeImageUrl = episode.image_url || podcastData.podcast_image_url;
 
       rssFeed = rssFeed +(`\n\t\t<item>`);
-      rssFeed = rssFeed +(`\n\t\t\t<title>${escapeXmlUrl(episode.title)}</title>`);
+      rssFeed = rssFeed +(`\n\t\t\t<title>${escapeXml(episode.title)}</title>`);
       rssFeed = rssFeed +(`\n\t\t\t<link>${episodeUrl}/${episode.guid}</link>`);
       rssFeed = rssFeed +(`\n\t\t\t<guid isPermaLink="false">${episode.guid}</guid>`);
       rssFeed = rssFeed +(`\n\t\t\t<description>${episode.description}</description>`);
-      rssFeed = rssFeed +(`\n\t\t\t<pubDate>${new Date(episode.publication_date).toUTCString()}</pubDate>`);
+      rssFeed = rssFeed +(`\n\t\t\t<pubDate>${new Date(episode.publication_date)}</pubDate>`);
       rssFeed = rssFeed +(`\n\t\t\t<itunes:summary>${episode.description}</itunes:summary>`);
       rssFeed = rssFeed +(`\n\t\t\t<itunes:author>${podcastData.speaker_id}</itunes:author>`);
-      rssFeed = rssFeed +(`\n\t\t\t<itunes:explicit>${podcastData.explicit ? "yes" : "no"}</itunes:explicit>`);
+      rssFeed = rssFeed +(`\n\t\t\t<itunes:explicit>${podcastData.explicit ? "true" : "false"}</itunes:explicit>`);
       rssFeed = rssFeed +(`\n\t\t\t<itunes:image href="${episodeImageUrl}"/>`);
       rssFeed = rssFeed +(`\n\t\t\t<enclosure url="${escapeXmlUrl(episodeAudioUrl)}" length="${episode.audio_length}" type="audio/mp4"/>`);
       rssFeed = rssFeed +(`\n\t\t</item>`);
