@@ -1,7 +1,7 @@
 // /app/podcasts/page.tsx
 import { createClient } from "@/utils/supabase/server";
-import Link from "next/link";
-import Image from "next/image";
+import { Tables } from "@/types/supabase";
+import { PodcastCard } from "@/components/PodcastCard";
 
 export const runtime = "edge";
 
@@ -21,50 +21,13 @@ export default async function PodcastsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-foreground">Podcasts</h1>{" "}
-      {/* Use theme colors */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {" "}
-        {/* Adjust grid for smaller screens */}
+    <div>
+      <h1 className="text-3xl font-bold text-foreground mb-6"> {/* */}
+        Podcasts
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
         {podcasts.map((podcast) => (
-          <Link href={`/podcasts/${podcast.podcast_slug}`} key={podcast.podcast_slug}>
-            {/* Simple Card Structure with Tailwind */}
-            <div className="bg-card text-card-foreground rounded-lg border border-border shadow-sm overflow-hidden h-full hover:shadow-md transition-shadow duration-200 cursor-pointer flex flex-col">
-              {" "}
-              {/* Use theme colors */}
-              {podcast.image_url && (
-                <div className="relative w-full h-48 flex-shrink-0">
-                  {" "}
-                  {/* Fixed height for image container */}
-                  <Image
-                    src={podcast.image_url}
-                    alt={podcast.title ?? "Podcast cover art"}
-                    // Placeholder background
-                    className="bg-muted"
-                    fill
-                    sizes="100vw"
-                    style={{
-                      objectFit: "cover"
-                    }} />
-                </div>
-              )}
-              <div className="p-4 flex flex-col flex-grow">
-                {" "}
-                {/* Padding and flex-grow for content */}
-                <h2 className="text-xl font-semibold mb-2 truncate">
-                  {" "}
-                  {/* Truncate long titles */}
-                  {podcast.title ?? "Untitled Podcast"}
-                </h2>
-                <p className="text-muted-foreground text-sm line-clamp-3 flex-grow">
-                  {" "}
-                  {/* Use theme colors, smaller text, limit lines */}
-                  {podcast.description ?? "No description available."}
-                </p>
-              </div>
-            </div>
-          </Link>
+          <PodcastCard key={podcast.podcast_slug} podcast={podcast as Tables<'podcasts'>} />
         ))}
       </div>
     </div>

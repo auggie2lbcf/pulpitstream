@@ -23,7 +23,7 @@ export function LeftSidebar({ className }: LeftSidebarProps) {
   return (
     <aside
       className={cn(
-        "h-[calc(100vh-3.5rem)] sticky top-14 border-r border-border bg-background transition-all duration-300 ease-in-out",
+        "sticky top-14 border-r border-border bg-background transition-all duration-300 ease-in-out",
         isCollapsed ? "w-16" : "w-[240px]", // Slightly smaller width
         "p-2 flex flex-col",
         className
@@ -103,13 +103,13 @@ export function LeftSidebar({ className }: LeftSidebarProps) {
               </div>
             ) : (
               <>
-                <LucideStar size={24} /> <p className={cn("ml-2")}>Podcasts</p>
+                <LucideStar size={24} /> <p className={cn("ml-2")}>Favorites</p>
               </>
             )}
           </div>
         </Link>
         <Link
-          href="/user"
+          href="/profile"
           className={cn(
             "p-2 rounded-md hover:bg-accent hover:text-accent-accent-foreground transition-all duration-300 ease-in-out",
             isCollapsed && "justify-center"
@@ -122,7 +122,7 @@ export function LeftSidebar({ className }: LeftSidebarProps) {
               </div>
             ) : (
               <>
-                <LucideUser size={24} /> <p className={cn("ml-2")}>Podcasts</p>
+                <LucideUser size={24} /> <p className={cn("ml-2")}>Profile</p>
               </>
             )}
           </div>

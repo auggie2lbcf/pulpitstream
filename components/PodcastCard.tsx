@@ -27,10 +27,10 @@ export function PodcastCard({ podcast, className }: PodcastCardProps) {
         <Card className="bg-card text-card-foreground border-border w-full overflow-hidden h-full flex flex-col group-hover:border-primary transition-colors duration-150"> {/* */}
           <div className="relative aspect-video w-full">
             <Image
-              src={image_url || "/placeholder-image.png"} // Provide a fallback image
+              src={image_url || "/image.png"} // Provide a fallback image
               alt={`Cover art for ${title}`}
-              layout="fill"
-              objectFit="cover"
+              width={300}
+              height={300}
               className="transition-transform duration-300 group-hover:scale-105"
             />
           </div>
