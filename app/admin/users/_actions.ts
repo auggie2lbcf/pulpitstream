@@ -15,22 +15,22 @@ function getAdminSupabaseClient() {
     process.env.SUPABASE_SERVICE_ROLE_KEY!, // THIS IS THE CRITICAL PART for admin actions
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
+        async get(name: string) {
+          return (await cookieStore).get(name)?.value;
         },
-        set(name: string, value: string, options: CookieOptions) {
+        async set(name: string, value: string, options: CookieOptions) {
           // Using a try-catch as in your utils/supabase/server.ts
           try {
-            cookieStore.set({ name, value, ...options });
+            (await cookieStore).set({ name, value, ...options });
           } catch (error) {
             // The `set` method was called from a Server Component.
             // This can be ignored if you have middleware refreshing
             // user sessions.
           }
         },
-        remove(name: string, options: CookieOptions) {
+        async remove(name: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value: '', ...options });
+            (await cookieStore).set({ name, value: '', ...options });
           } catch (error) {
             // The `delete` method was called from a Server Component.
           }
@@ -50,19 +50,19 @@ export async function checkAdminAuth() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
+        async get(name: string) {
+          return (await cookieStore).get(name)?.value;
         },
-        set(name: string, value: string, options: CookieOptions) {
+        async set(name: string, value: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value, ...options });
+            (await cookieStore).set({ name, value, ...options });
           } catch (error) {
             // Ignore error
           }
         },
-        remove(name: string, options: CookieOptions) {
+        async remove(name: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value: '', ...options });
+            (await cookieStore).set({ name, value: '', ...options });
           } catch (error) {
             // Ignore error
           }
@@ -110,7 +110,7 @@ export async function listAllUsers(page = 1, perPage = 50) {
   const { data, error } = await supabase.auth.admin.listUsers({ page, perPage });
   if (error) {
     console.error("Error listing users:", error.message);
-    return { data: null, error: { message: error.message, ...error } };
+    return { data: null, error: { ...error } };
   }
   return { data, error: null };
 }
@@ -133,7 +133,7 @@ export async function adminCreateUser(attributes: {
 
   if (error) {
     console.error("Error creating user:", error.message);
-    return { data: null, error: { message: error.message, ...error } };
+    return { data: null, error: { ...error } };
   }
   revalidatePath('/admin/users'); // Ensure this path matches your page route
   return { data, error: null };
@@ -157,7 +157,7 @@ export async function adminUpdateUser(
 
   if (error) {
     console.error("Error updating user:", error.message);
-    return { data: null, error: { message: error.message, ...error } };
+    return { data: null, error: { ...error } };
   }
   revalidatePath('/admin/users'); // Ensure this path matches your page route
   return { data, error: null };
@@ -169,7 +169,7 @@ export async function adminDeleteUser(userId: string) {
 
   if (error) {
     console.error("Error deleting user:", error.message);
-    return { data: null, error: { message: error.message, ...error } };
+    return { data: null, error: { ...error } };
   }
   revalidatePath('/admin/users'); // Ensure this path matches your page route
   return { data, error: null };

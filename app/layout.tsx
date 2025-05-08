@@ -12,7 +12,7 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: "PulpitStream - Twitch Style",
+  title: "PulpitStream",
   description: "A new layout for PulpitStream",
 };
 
