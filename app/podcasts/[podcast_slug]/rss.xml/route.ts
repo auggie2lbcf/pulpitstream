@@ -100,7 +100,7 @@ export async function GET(
       const episodeImageUrl = episode.image_url || podcastData.podcast_image_url;
 
       rssFeed = rssFeed +(`\t\t<item>`);
-      rssFeed = rssFeed +(`\t\t\t<title>${escapeXmlUrl(episode.title)}</title>`);
+      rssFeed = rssFeed +(`\t\t\t<title>${episode.title}</title>`);
       rssFeed = rssFeed +(`\t\t\t<link>${episodeUrl}/${episode.guid}</link>`);
       rssFeed = rssFeed +(`\t\t\t<guid isPermaLink="false">${episode.guid}</guid>`);
       rssFeed = rssFeed +(`\t\t\t<description>${episode.description}</description>`);
