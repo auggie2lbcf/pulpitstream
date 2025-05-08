@@ -106,8 +106,8 @@ export async function GET(
   if (episodes) {
     for (const episode of episodes) {
       const episodeUrl = `${podcastBaseUrl}/episodes/${episode.episode_slug}`;
-      const episodeAudioUrl = episode.audio_url || episode.audio_file_url;
-      const episodeImageUrl = episode.image_url || podcastData.podcast_image_url;
+      const episodeAudioUrl = episode.audio_url;
+      const episodeImageUrl = episode.image_url || podcastData.image_url;
 
       rssFeed = rssFeed +(`\n\t\t<item>`);
       rssFeed = rssFeed +(`\n\t\t\t<title>${escapeXml(episode.title)}</title>`);
