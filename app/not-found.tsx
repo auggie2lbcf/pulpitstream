@@ -1,5 +1,7 @@
 import Link from 'next/link';
-import { FileQuestion, Home, ChevronRight } from 'lucide-react'; // Using FileQuestion for a "what happened?" feel
+import { FileQuestion, Home, ChevronRight } from 'lucide-react';
+
+export const runtime = 'edge';
 
 export default function NotFound() {
   return (

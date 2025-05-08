@@ -5,6 +5,8 @@ import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/utils/supabase/client';
 import { ArrowLeftIcon, ArrowUpIcon, CameraIcon } from 'lucide-react';
 
+export const runtime = 'edge';
+
 // ... (ProfileData, FeedbackMessage, generateUniqueFileName interfaces/functions from previous code)
 interface ProfileData {
     username: string;
