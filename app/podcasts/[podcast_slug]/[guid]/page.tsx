@@ -43,7 +43,10 @@ export default async function EpisodePlayerPage({ params }: {params: EpisodePlay
       {/* Optional: Breadcrumb or link back to podcast */}
       {podcastInfo && (
            <div className="mb-4 text-sm text-muted-foreground">
-               <Link href={`/podcasts/${podcast_slug}`} className="hover:underline">
+               <Link
+                 href={`/podcasts/${podcast_slug}`}
+                 className="hover:underline"
+                 legacyBehavior>
                    Back to {podcastInfo.title ?? 'Podcast'} Episodes
                </Link>
            </div>
@@ -65,7 +68,10 @@ export default async function EpisodePlayerPage({ params }: {params: EpisodePlay
           <div className="flex-grow text-center sm:text-left">
            <h1 className="text-2xl sm:text-3xl font-bold mb-1">{episode.title ?? "Untitled Episode"}</h1>
             <p className="text-base text-muted-foreground mb-2">
-              From: <Link href={`/podcasts/${podcast_slug}`} className="hover:underline font-medium">{podcastInfo?.title ?? 'Podcast'}</Link>
+              From: <Link
+              href={`/podcasts/${podcast_slug}`}
+              className="hover:underline font-medium"
+              legacyBehavior>{podcastInfo?.title ?? 'Podcast'}</Link>
             </p>
           </div>
      </div>

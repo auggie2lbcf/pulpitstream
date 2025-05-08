@@ -53,7 +53,7 @@ export default async function Home() {
           // Cast to the correct type if Supabase client doesn't infer it perfectly
           // though with the select string, it should generally be fine for listed props.
           // If you select '*', it aligns perfectly with Tables<'podcasts'>
-          <PodcastCard key={podcast.podcast_id} podcast={podcast as Tables<'podcasts'>} />
+          (<PodcastCard key={podcast.podcast_id} podcast={podcast as Tables<'podcasts'>} />)
         ))}
       </div>
     </div>

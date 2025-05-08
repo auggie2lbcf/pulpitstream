@@ -66,10 +66,12 @@ export default async function PodcastEpisodesListPage({ params } : { params : Po
           {episodes.map((episode) => (
             // Link wrapping the episode details
             (<Link
-              href={`/podcasts/${podcast_slug}/${episode.guid}`} // Link to the specific episode page
-              key={episode.guid}
-              className="block hover:bg-muted/50 transition-colors duration-150 rounded-lg border border-border p-4 shadow-sm" // Make the whole item clickable and styled
-            >
+            // Link to the specific episode page
+            href={`/podcasts/${podcast_slug}/${episode.guid}`}
+            key={episode.guid}
+            // Make the whole item clickable and styled
+            className="block hover:bg-muted/50 transition-colors duration-150 rounded-lg border border-border p-4 shadow-sm"
+            legacyBehavior>
               <div>
                 <h3 className="text-lg font-semibold mb-1 text-primary group-hover:underline"> {/* Use primary color, add underline on hover */}
                   {episode.title ?? "Untitled Episode"}
