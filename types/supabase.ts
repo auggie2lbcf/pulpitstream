@@ -9,45 +9,181 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      episodes: {                       // Table for podcast episodes
+      categories: {
         Row: {
-          audio_url: string             //Cloudflare R2 URL
-          date: string                  // Date of the episode
-          description: string | null    // Episode description
-          episode_num: number | null    // Episode number
-          episode_slug: string          // UUID v7
-          id: number                    // PK
-          passage: string | null        // Bible passage
-          podcast_slug: string          // FK to podcasts table
-          series: string | null         // Series name    
-          speaker_id: string | null     // FK to speakers table 
-          title: string
+          apple_approved: boolean | null
+          category_id: number
+          created_at: string | null
+          name: string
+          parent_category_id: number | null
+          updated_at: string | null
         }
         Insert: {
-          audio_url: string
-          date: string
-          description?: string | null
-          episode_num?: number | null
-          episode_slug?: string
-          id?: number
-          passage?: string | null
-          podcast_slug: string
-          series?: string | null
-          speaker_id?: string | null
-          title: string
+          apple_approved?: boolean | null
+          category_id?: number
+          created_at?: string | null
+          name: string
+          parent_category_id?: number | null
+          updated_at?: string | null
         }
         Update: {
-          audio_url?: string
-          date?: string
+          apple_approved?: boolean | null
+          category_id?: number
+          created_at?: string | null
+          name?: string
+          parent_category_id?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categories_parent_category_id_fkey"
+            columns: ["parent_category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["category_id"]
+          },
+        ]
+      }
+      episode_speakers: {
+        Row: {
+          display_order: number | null
+          episode_id: number
+          role: string
+          speaker_id: number
+        }
+        Insert: {
+          display_order?: number | null
+          episode_id: number
+          role?: string
+          speaker_id: number
+        }
+        Update: {
+          display_order?: number | null
+          episode_id?: number
+          role?: string
+          speaker_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "episode_speakers_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["episode_id"]
+          },
+          {
+            foreignKeyName: "episode_speakers_speaker_id_fkey"
+            columns: ["speaker_id"]
+            isOneToOne: false
+            referencedRelation: "speakers"
+            referencedColumns: ["speaker_id"]
+          },
+        ]
+      }
+      episode_transcripts: {
+        Row: {
+          created_at: string | null
+          episode_id: number
+          language_code: string | null
+          mime_type: string
+          rel_type: string | null
+          transcript_id: number
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          episode_id: number
+          language_code?: string | null
+          mime_type: string
+          rel_type?: string | null
+          transcript_id?: number
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          episode_id?: number
+          language_code?: string | null
+          mime_type?: string
+          rel_type?: string | null
+          transcript_id?: number
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "episode_transcripts_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["episode_id"]
+          },
+        ]
+      }
+      episodes: {
+        Row: {
+          audio_url: string | null
+          content_encoded_html: string | null
+          created_at: string | null
+          description: string | null
+          enclosure_length_bytes: number | null
+          enclosure_mime_type: string | null
+          episode_id: number
+          guid: string | null
+          itunes_duration_seconds: number | null
+          itunes_episode_number: number | null
+          itunes_episode_type: string | null
+          itunes_explicit: boolean | null
+          itunes_image_url: string | null
+          itunes_season_number: number | null
+          itunes_summary: string | null
+          podcast_slug: string
+          publication_date: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          audio_url?: string | null
+          content_encoded_html?: string | null
+          created_at?: string | null
           description?: string | null
-          episode_num?: number | null
-          episode_slug?: string
-          id?: number
-          passage?: string | null
+          enclosure_length_bytes?: number | null
+          enclosure_mime_type?: string | null
+          episode_id?: number
+          guid?: string | null
+          itunes_duration_seconds?: number | null
+          itunes_episode_number?: number | null
+          itunes_episode_type?: string | null
+          itunes_explicit?: boolean | null
+          itunes_image_url?: string | null
+          itunes_season_number?: number | null
+          itunes_summary?: string | null
+          podcast_slug: string
+          publication_date?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          audio_url?: string | null
+          content_encoded_html?: string | null
+          created_at?: string | null
+          description?: string | null
+          enclosure_length_bytes?: number | null
+          enclosure_mime_type?: string | null
+          episode_id?: number
+          guid?: string | null
+          itunes_duration_seconds?: number | null
+          itunes_episode_number?: number | null
+          itunes_episode_type?: string | null
+          itunes_explicit?: boolean | null
+          itunes_image_url?: string | null
+          itunes_season_number?: number | null
+          itunes_summary?: string | null
           podcast_slug?: string
-          series?: string | null
-          speaker_id?: string | null
-          title?: string
+          publication_date?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -55,71 +191,178 @@ export type Database = {
             columns: ["podcast_slug"]
             isOneToOne: false
             referencedRelation: "podcasts"
-            referencedColumns: ["feed_slug"]
+            referencedColumns: ["podcast_slug"]
+          },
+        ]
+      }
+      podcast_categories: {
+        Row: {
+          category_id: number
+          podcast_id: number
+        }
+        Insert: {
+          category_id: number
+          podcast_id: number
+        }
+        Update: {
+          category_id?: number
+          podcast_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "podcast_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["category_id"]
           },
           {
-            foreignKeyName: "episodes_speaker_fkey"
+            foreignKeyName: "podcast_categories_podcast_id_fkey"
+            columns: ["podcast_id"]
+            isOneToOne: false
+            referencedRelation: "podcasts"
+            referencedColumns: ["podcast_id"]
+          },
+        ]
+      }
+      podcast_speakers: {
+        Row: {
+          display_order: number | null
+          podcast_id: number
+          role: string
+          speaker_id: number
+        }
+        Insert: {
+          display_order?: number | null
+          podcast_id: number
+          role?: string
+          speaker_id: number
+        }
+        Update: {
+          display_order?: number | null
+          podcast_id?: number
+          role?: string
+          speaker_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "podcast_speakers_podcast_id_fkey"
+            columns: ["podcast_id"]
+            isOneToOne: false
+            referencedRelation: "podcasts"
+            referencedColumns: ["podcast_id"]
+          },
+          {
+            foreignKeyName: "podcast_speakers_speaker_id_fkey"
             columns: ["speaker_id"]
             isOneToOne: false
             referencedRelation: "speakers"
-            referencedColumns: ["id"]
+            referencedColumns: ["speaker_id"]
           },
         ]
       }
       podcasts: {
         Row: {
-          category: string | null
+          atom_link_self_url: string | null
+          copyright_text: string | null
+          created_at: string | null
           description: string | null
-          feed_slug: string
-          id: string
-          image_url: string | null
-          language: string | null
-          title: string | null
-          user_id: string | null
+          image_url: string
+          itunes_author_name: string | null
+          itunes_complete: boolean | null
+          itunes_explicit: boolean
+          itunes_owner_email: string | null
+          itunes_owner_name: string | null
+          itunes_summary: string | null
+          itunes_type: string | null
+          language_code: string
+          link_website: string
+          podcast_id: number
+          podcast_namespace_guid: string | null
+          podcast_namespace_locked: boolean | null
+          podcast_namespace_owner_email_for_lock: string | null
+          podcast_slug: string
+          title: string
+          updated_at: string | null
         }
         Insert: {
-          category?: string | null
+          atom_link_self_url?: string | null
+          copyright_text?: string | null
+          created_at?: string | null
           description?: string | null
-          feed_slug: string
-          id?: string
-          image_url?: string | null
-          language?: string | null
-          title?: string | null
-          user_id?: string | null
+          image_url: string
+          itunes_author_name?: string | null
+          itunes_complete?: boolean | null
+          itunes_explicit?: boolean
+          itunes_owner_email?: string | null
+          itunes_owner_name?: string | null
+          itunes_summary?: string | null
+          itunes_type?: string | null
+          language_code?: string
+          link_website: string
+          podcast_id?: number
+          podcast_namespace_guid?: string | null
+          podcast_namespace_locked?: boolean | null
+          podcast_namespace_owner_email_for_lock?: string | null
+          podcast_slug: string
+          title: string
+          updated_at?: string | null
         }
         Update: {
-          category?: string | null
+          atom_link_self_url?: string | null
+          copyright_text?: string | null
+          created_at?: string | null
           description?: string | null
-          feed_slug?: string
-          id?: string
-          image_url?: string | null
-          language?: string | null
-          title?: string | null
-          user_id?: string | null
+          image_url?: string
+          itunes_author_name?: string | null
+          itunes_complete?: boolean | null
+          itunes_explicit?: boolean
+          itunes_owner_email?: string | null
+          itunes_owner_name?: string | null
+          itunes_summary?: string | null
+          itunes_type?: string | null
+          language_code?: string
+          link_website?: string
+          podcast_id?: number
+          podcast_namespace_guid?: string | null
+          podcast_namespace_locked?: boolean | null
+          podcast_namespace_owner_email_for_lock?: string | null
+          podcast_slug?: string
+          title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       speakers: {
         Row: {
-          first_name: string
-          id: string
-          last_name: string | null
-          speaker_slug: string | null
-          user_id: string | null
+          bio: string | null
+          created_at: string | null
+          email: string | null
+          name: string
+          profile_image_url: string | null
+          speaker_id: number
+          updated_at: string | null
+          website_url: string | null
         }
         Insert: {
-          first_name: string
-          id?: string
-          last_name?: string | null
-          speaker_slug?: string | null
-          user_id?: string | null
+          bio?: string | null
+          created_at?: string | null
+          email?: string | null
+          name: string
+          profile_image_url?: string | null
+          speaker_id?: number
+          updated_at?: string | null
+          website_url?: string | null
         }
         Update: {
-          first_name?: string
-          id?: string
-          last_name?: string | null
-          speaker_slug?: string | null
-          user_id?: string | null
+          bio?: string | null
+          created_at?: string | null
+          email?: string | null
+          name?: string
+          profile_image_url?: string | null
+          speaker_id?: number
+          updated_at?: string | null
+          website_url?: string | null
         }
         Relationships: []
       }

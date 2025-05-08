@@ -1,7 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  reactStrictMode: false, // Disable for testing
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "pic.pulpitstream.com",
+                pathname: "/**",
+            },
+        ],
+    },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
