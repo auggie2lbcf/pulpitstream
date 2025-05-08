@@ -57,7 +57,7 @@ export async function GET(
 
 
   var rssFeed = `<?xml version="1.0" encoding="UTF-8"?>`;
-  rssFeed = rssFeed + (`<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">`
+  rssFeed = rssFeed + (`<rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0" xmlns:podcast="https://podcastindex.org/namespace/1.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">`
   );
   rssFeed = rssFeed +(`\t<channel>`);
   rssFeed = rssFeed +(`\t\t<title>${podcastData.title}</title>`);
