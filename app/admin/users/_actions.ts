@@ -6,25 +6,36 @@ import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // Function to get a Supabase client with SERVICE_ROLE_KEY for admin operations
+// This uses your existing pattern from utils/supabase/server.ts but explicitly uses the service role key.
 // IMPORTANT: Ensure SUPABASE_SERVICE_ROLE_KEY is set in your environment variables
 function getAdminSupabaseClient() {
-  const cookieStore = cookies(); // Required by createServerClient, even if not always used for service role
+  const cookieStore = cookies();
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!, // THIS IS THE CRITICAL PART
+    process.env.SUPABASE_SERVICE_ROLE_KEY!, // THIS IS THE CRITICAL PART for admin actions
     {
       cookies: {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
         set(name: string, value: string, options: CookieOptions) {
-          cookieStore.set({ name, value, ...options });
+          // Using a try-catch as in your utils/supabase/server.ts
+          try {
+            cookieStore.set({ name, value, ...options });
+          } catch (error) {
+            // The `set` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
         },
         remove(name: string, options: CookieOptions) {
-          cookieStore.delete({ name, ...options });
+          try {
+            cookieStore.set({ name, value: '', ...options });
+          } catch (error) {
+            // The `delete` method was called from a Server Component.
+          }
         },
       },
-      // Optional: auth: { persistSession: false } // Service role doesn't rely on user sessions
     }
   );
 }
@@ -33,10 +44,31 @@ function getAdminSupabaseClient() {
 // IMPLEMENT YOUR OWN ROBUST ADMIN CHECK LOGIC HERE
 export async function checkAdminAuth() {
   const cookieStore = cookies();
-  const supabaseUserClient = createServerClient( // Regular client to get current user
+  // Use the standard client (anon key) to get the current user session
+  const supabaseUserClient = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { /* ... cookie handlers as above ... */ get(name: string) {return cookieStore.get(name)?.value;},set(name: string, value: string, options: CookieOptions) {cookieStore.set({ name, value, ...options });},remove(name: string, options: CookieOptions) {cookieStore.delete({ name, ...options });} } }
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value, ...options });
+          } catch (error) {
+            // Ignore error
+          }
+        },
+        remove(name: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value: '', ...options });
+          } catch (error) {
+            // Ignore error
+          }
+        },
+      },
+    }
   );
 
   const { data: { user } } = await supabaseUserClient.auth.getUser();
@@ -47,28 +79,29 @@ export async function checkAdminAuth() {
 
   // --- THIS IS A PLACEHOLDER ADMIN CHECK ---
   // Replace with your actual admin role verification logic.
-  // For example, check a custom claim, user_metadata, or a separate admin table.
-  // Option 1: Check user_metadata for a role (ensure metadata is set by a trusted source)
-  // if (user.user_metadata?.role === 'admin') {
-  //   return { isAdmin: true };
-  // }
-  // Option 2: Check app_metadata for a role (more secure, usually set server-side)
+  // Example: Check app_metadata for a role (more secure, set server-side by a trusted source)
   // if (user.app_metadata?.roles?.includes('admin')) {
   //  return { isAdmin: true };
   // }
-  // Option 3: Check against a list of admin emails (less flexible)
+  // Example: Check user_metadata for a role
+  // if (user.user_metadata?.role === 'admin') {
+  //   return { isAdmin: true };
+  // }
+  // Example: Check against a list of admin emails (less flexible but simple for small teams)
   // const adminEmails = (process.env.ADMIN_EMAILS || "").split(',');
   // if (user.email && adminEmails.includes(user.email)) {
   //    return { isAdmin: true };
   // }
 
-  // For this example, we'll allow if a user is logged in.
-  // !!! WARNING: THIS IS INSECURE FOR A REAL ADMIN PANEL. IMPLEMENT PROPER RBAC. !!!
-  console.warn("Using placeholder admin check. Implement proper RBAC for production.");
-  return { isAdmin: true };
+  // !!! WARNING: The following is INSECURE for a real admin panel. IMPLEMENT PROPER RBAC. !!!
+  // For demonstration, allowing if a user is logged in.
+  console.warn("Using placeholder admin check in app/admin/users/_actions.ts. Implement proper RBAC for production.");
+  if (user) { // Basic check that a user exists. THIS IS NOT AN ADMIN CHECK.
+      return { isAdmin: true };
+  }
   // --- END PLACEHOLDER ---
 
-  // return { isAdmin: false, error: 'You are not authorized to perform this action.' };
+  return { isAdmin: false, error: 'You are not authorized to perform this action.' };
 }
 
 
@@ -93,7 +126,6 @@ export async function adminCreateUser(attributes: {
   // Add any other valid attributes for supabase.auth.admin.createUser
 }) {
   const supabase = getAdminSupabaseClient();
-  // Ensure required fields are present for creation
   if (!attributes.email || !attributes.password) {
     return { data: null, error: { message: "Email and password are required for new users." } };
   }
@@ -103,7 +135,7 @@ export async function adminCreateUser(attributes: {
     console.error("Error creating user:", error.message);
     return { data: null, error: { message: error.message, ...error } };
   }
-  revalidatePath('/admin/users'); // Adjust path if your page is elsewhere
+  revalidatePath('/admin/users'); // Ensure this path matches your page route
   return { data, error: null };
 }
 
@@ -127,7 +159,7 @@ export async function adminUpdateUser(
     console.error("Error updating user:", error.message);
     return { data: null, error: { message: error.message, ...error } };
   }
-  revalidatePath('/admin/users'); // Adjust path
+  revalidatePath('/admin/users'); // Ensure this path matches your page route
   return { data, error: null };
 }
 
@@ -139,6 +171,6 @@ export async function adminDeleteUser(userId: string) {
     console.error("Error deleting user:", error.message);
     return { data: null, error: { message: error.message, ...error } };
   }
-  revalidatePath('/admin/users'); // Adjust path
+  revalidatePath('/admin/users'); // Ensure this path matches your page route
   return { data, error: null };
 }
