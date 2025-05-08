@@ -53,7 +53,7 @@ export async function GET(
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || `http://localhost:3000`;
   const podcastBaseUrl = `https://${siteUrl}/podcasts/${podcastData.podcast_slug}`;
-  const podcastFeedUrl = `${podcastBaseUrl}/rss`;
+  const podcastFeedUrl = `${podcastBaseUrl}/rss.xml`;
 
 
   var rssFeed = `<?xml version="1.0" encoding="UTF-8"?>`;
@@ -88,8 +88,8 @@ export async function GET(
   rssFeed = rssFeed +(`\n\t\t</itunes:owner>`);
   rssFeed = rssFeed +(`\n\t\t<itunes:link>${podcastBaseUrl}</itunes:link>`);
   rssFeed = rssFeed +(`\n\t\t<itunes:image href="${podcastData.image_url}"/>`);
-  rssFeed = rssFeed +(`\n\t\t<atom:link href="${podcastFeedUrl}" rel="self" type="application/rss"/>`);
-  rssFeed = rssFeed +(`\n\t\t<podcast:link href="${podcastFeedUrl}" rel="self" type="application/rss+"/>`);
+  rssFeed = rssFeed +(`\n\t\t<atom:link href="${podcastFeedUrl}" rel="self" type="application/rss+xml"/>`);
+  rssFeed = rssFeed +(`\n\t\t<podcast:link href="${podcastFeedUrl}" rel="self" type="application/rss+xml"/>`);
   rssFeed = rssFeed +(`\n\t\t<generator>PulpitStream.com</generator>`);
 
   if (episodes) {
@@ -99,7 +99,7 @@ export async function GET(
       const episodeImageUrl = episode.image_url || podcastData.podcast_image_url;
 
       rssFeed = rssFeed +(`\n\t\t<item>`);
-      rssFeed = rssFeed +(`\n\t\t\t<title>${episode.title}</title>`);
+      rssFeed = rssFeed +(`\n\t\t\t<title>${escapeXmlUrl(episode.title)}</title>`);
       rssFeed = rssFeed +(`\n\t\t\t<link>${episodeUrl}/${episode.guid}</link>`);
       rssFeed = rssFeed +(`\n\t\t\t<guid isPermaLink="false">${episode.guid}</guid>`);
       rssFeed = rssFeed +(`\n\t\t\t<description>${episode.description}</description>`);
@@ -120,7 +120,7 @@ export async function GET(
 
   return new NextResponse(rssFeed, {  
     headers: {
-      "Content-Type": "application/rss",
+      "Content-Type": "application/rss+xml",
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
   }},);
 }
