@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'; // For client-side navigation if ne
 import { listAllUsers, adminCreateUser, adminUpdateUser, adminDeleteUser, checkAdminAuth } from './_actions'; // Adjust path if needed
 import { Edit3, Trash2, UserPlus, XCircle, CheckCircle2, AlertTriangle, Loader2, Eye, EyeOff, RefreshCw } from 'lucide-react';
 
+export const runtime = 'edge';
+
 // Type for user data from Supabase Admin API
 interface SupaAdminUser {
   id: string;
