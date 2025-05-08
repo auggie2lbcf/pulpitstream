@@ -88,18 +88,20 @@ export async function GET(
   rssFeed = rssFeed +(`\n\t\t<itunes:author>${podcastData.owner}</itunes:author>`);
   rssFeed = rssFeed +(`\n\t\t<itunes:explicit>${podcastData.explicit ? "true" : "false"}</itunes:explicit>`);
   // rssFeed = rssFeed +(`\n\t\t<itunes:category text="${podcastData.categories}">`);
-  rssFeed = rssFeed +(`\n\t\t<itunes:category text="Relgion">`);
-  rssFeed = rssFeed +(`\n\t\t\t<itunes:category text="${podcastData.subcategory}"/>`);
+  rssFeed = rssFeed +(`\n\t\t<itunes:category text="Relgion & Spirituality">`);
+  rssFeed = rssFeed +(`\n\t\t\t<itunes:category text="Religion"/>`);
   rssFeed = rssFeed +(`\n\t\t</itunes:category>`);
   rssFeed = rssFeed +(`\n\t\t<itunes:owner>`);
-  rssFeed = rssFeed +(`\n\t\t\t<itunes:name>${podcastData.owner}</itunes:name>`);
-  rssFeed = rssFeed +(`\n\t\t\t<itunes:email>${podcastData.email}</itunes:email>`);
+  rssFeed = rssFeed +(`\n\t\t\t<itunes:name>${podcastData.itunes_owner_name}</itunes:name>`);
+  rssFeed = rssFeed +(`\n\t\t\t<itunes:email>${podcastData.itunes_owner_email}</itunes:email>`);
   rssFeed = rssFeed +(`\n\t\t</itunes:owner>`);
   rssFeed = rssFeed +(`\n\t\t<itunes:link>${podcastBaseUrl}</itunes:link>`);
   rssFeed = rssFeed +(`\n\t\t<itunes:image href="${podcastData.image_url}"/>`);
   rssFeed = rssFeed +(`\n\t\t<atom:link href="${podcastFeedUrl}" rel="self" type="application/rss+xml"/>`);
   rssFeed = rssFeed +(`\n\t\t<podcast:link href="${podcastFeedUrl}" rel="self" type="application/rss+xml"/>`);
   rssFeed = rssFeed +(`\n\t\t<generator>PulpitStream.com</generator>`);
+  rssFeed = rssFeed +(`\n\t\t<podcast:locked>${podcastData.locked}</podcast:locked>`);
+  rssFeed = rssFeed +(`\n\t\t<podcast:guid>${podcastData.id}</podcast:guid>`);
 
   if (episodes) {
     for (const episode of episodes) {
