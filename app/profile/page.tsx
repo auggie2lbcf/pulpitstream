@@ -22,7 +22,7 @@ interface FeedbackMessage {
 
 const generateUniqueFileName = (originalName: string) => {
     const extension = originalName.split('.').pop();
-    return `avatar-${Date.now()}-${Math.random().toString(36).substring(2,9)}.${extension}`;
+    return `avatar-${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${extension}`;
 }
 
 
@@ -121,12 +121,12 @@ export default function ProfilePage() {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             if (file.size > 5 * 1024 * 1024) {
-                setFeedbackMessage({ text: 'File is too large. Maximum 5MB allowed.', type: 'error'});
+                setFeedbackMessage({ text: 'File is too large. Maximum 5MB allowed.', type: 'error' });
                 setFormErrors(prev => ({ ...prev, avatar_url: 'File too large.' }));
                 return;
             }
             if (!['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type)) {
-                setFeedbackMessage({ text: 'Invalid file type. Please select an image (JPG, PNG, WEBP, GIF).', type: 'error'});
+                setFeedbackMessage({ text: 'Invalid file type. Please select an image (JPG, PNG, WEBP, GIF).', type: 'error' });
                 setFormErrors(prev => ({ ...prev, avatar_url: 'Invalid file type.' }));
                 return;
             }
@@ -140,17 +140,101 @@ export default function ProfilePage() {
         }
     };
 
+    // This function should be INSIDE your ProfilePage component,
+    // as it uses setIsUploading and setFeedbackMessage from the component's state.
+    // The generateUniqueFileName function is also assumed to be in the same scope.
+
     async function uploadAvatarToR2(file: File): Promise<string> {
         setIsUploading(true);
-        setFeedbackMessage({ text: 'Uploading avatar...', type: 'info' });
-        // ** START: REPLACE WITH YOUR ACTUAL R2 UPLOAD LOGIC **
-        console.log(`Simulating R2 upload for: ${file.name}`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        const simulatedR2ObjectUrl = `https://pic.pulpitstream.com/avatars/${generateUniqueFileName(file.name)}`;
-        console.log(`Simulated R2 URL: ${simulatedR2ObjectUrl}`);
-        // ** END: REPLACE WITH YOUR ACTUAL R2 UPLOAD LOGIC **
-        setIsUploading(false);
-        return simulatedR2ObjectUrl;
+        // Set initial feedback message immediately. It will be updated by the try/catch block.
+        setFeedbackMessage({ text: 'Preparing to upload avatar...', type: 'info' });
+
+        const clientSideFileName = generateUniqueFileName(file.name); // Uses your existing function
+
+        try {
+            // Step 1: Request a presigned URL from your Cloudflare Pages Function.
+            setFeedbackMessage({ text: 'Requesting upload permission...', type: 'info' });
+            const presignedUrlResponse = await fetch('/api/r2/generate-upload-avatar-url', { // Endpoint of your CF Pages Function
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Add any authentication headers if your Pages Function requires them (e.g., JWT token)
+                },
+                body: JSON.stringify({
+                    fileName: clientSideFileName,
+                    contentType: file.type,
+                }),
+            });
+
+            if (!presignedUrlResponse.ok) {
+                let errorMessage = `Failed to get upload URL: ${presignedUrlResponse.statusText}`;
+                try {
+                    const errorData = await presignedUrlResponse.json();
+                    errorMessage = errorData.message || errorData.error || errorMessage;
+                } catch (e) {
+                    // Could not parse JSON, stick with statusText
+                }
+                // This error will be caught by the outer catch block
+                throw new Error(errorMessage);
+            }
+
+            // Define the expected response structure from your backend
+            interface PresignedUrlResponseData {
+                uploadUrl: string;
+                r2ObjectUrl: string;
+            }
+
+            const { uploadUrl, r2ObjectUrl }: PresignedUrlResponseData = await presignedUrlResponse.json();
+
+            if (!uploadUrl || !r2ObjectUrl) {
+                throw new Error('Invalid response from presigned URL endpoint: missing uploadUrl or r2ObjectUrl.');
+            }
+
+            // Step 2: Upload the file directly to R2 using the presigned URL.
+            setFeedbackMessage({ text: 'Uploading avatar...', type: 'info' });
+            console.log(`Uploading ${file.name} to R2 via presigned URL...`);
+
+            const uploadResponse = await fetch(uploadUrl, {
+                method: 'PUT',
+                body: file,
+                headers: {
+                    'Content-Type': file.type,
+                },
+            });
+
+            if (!uploadResponse.ok) {
+                const r2ErrorText = await uploadResponse.text();
+                console.error('R2 Upload Error Response:', r2ErrorText);
+                let detailedErrorMessage = `Failed to upload to R2: ${uploadResponse.statusText}`;
+                if (r2ErrorText) {
+                    const messageMatch = r2ErrorText.match(/<Message>(.*?)<\/Message>/i);
+                    if (messageMatch && messageMatch[1]) {
+                        detailedErrorMessage += `. R2 Message: ${messageMatch[1]}`;
+                    } else {
+                        detailedErrorMessage += `. Details: ${r2ErrorText.substring(0, 200)}`;
+                    }
+                }
+                throw new Error(detailedErrorMessage);
+            }
+
+            console.log(`Successfully uploaded ${file.name} to R2. Object URL: ${r2ObjectUrl}`);
+            // Set success message here, it might be overwritten by handleSubmit, but good for direct feedback
+            setFeedbackMessage({ text: 'Avatar uploaded successfully!', type: 'success' });
+            setIsUploading(false);
+            return r2ObjectUrl; // Return the actual R2 object URL
+
+        } catch (error: any) {
+            console.error('Error uploading avatar to R2:', error);
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred during upload.';
+            // Set error message. This will be displayed by your feedbackMessage logic.
+            setFeedbackMessage({ text: `Upload failed: ${errorMessage}`, type: 'error' });
+            setIsUploading(false);
+            // Re-throw the error so handleSubmit's catch block can also see it if needed,
+            // or decide how you want to propagate this failure.
+            // If handleSubmit relies on this throwing to stop, then re-throw.
+            throw error;
+        }
+        // No need for a finally block to set setIsUploading(false) if all paths in try/catch do it.
     }
 
     const hasProfileChanged = () => {
@@ -168,7 +252,7 @@ export default function ProfilePage() {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         if (isUploading) {
-            setFeedbackMessage({text: "Please wait for the upload to complete.", type: "info"});
+            setFeedbackMessage({ text: "Please wait for the upload to complete.", type: "info" });
             return;
         }
         setFeedbackMessage(null); setFormErrors({});
@@ -212,8 +296,8 @@ export default function ProfilePage() {
             if (upsertError) throw upsertError;
 
             setFeedbackMessage({ text: 'Profile updated successfully!', type: 'success' });
-            setProfile(prev => ({...prev, avatar_url: finalAvatarUrl}));
-            setInitialProfile(prev => ({...(prev || profile), ...updates}));
+            setProfile(prev => ({ ...prev, avatar_url: finalAvatarUrl }));
+            setInitialProfile(prev => ({ ...(prev || profile), ...updates }));
             setSelectedAvatarFile(null);
             if (finalAvatarUrl) setAvatarPreview(finalAvatarUrl);
 
@@ -247,7 +331,7 @@ export default function ProfilePage() {
     return (
         <div className="max-w-2xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div className="mb-6 flex items-center">
-                 <button onClick={() => window.history.back()} className="p-2 mr-2 hover:bg-gray-100 rounded-full">
+                <button onClick={() => window.history.back()} className="p-2 mr-2 hover:bg-gray-100 rounded-full">
                     <ArrowLeftIcon className="h-5 w-5 text-gray-600" />
                 </button>
                 <h1 className="text-2xl font-semibold text-gray-900">Edit Profile</h1>
@@ -284,7 +368,7 @@ export default function ProfilePage() {
                     </div>
                     {formErrors.avatar_url && <p className="mt-1 text-xs text-red-600">{formErrors.avatar_url}</p>}
                     {isUploading && <p className="mt-1 text-sm text-blue-600">Uploading image, please wait...</p>}
-                     <p className="mt-1 text-xs text-gray-500">Max file size: 5MB. Allowed types: JPG, PNG, WEBP, GIF.</p>
+                    <p className="mt-1 text-xs text-gray-500">Max file size: 5MB. Allowed types: JPG, PNG, WEBP, GIF.</p>
                 </div>
 
                 <div>
@@ -298,7 +382,7 @@ export default function ProfilePage() {
                     <input id="username" name="username" type="text" value={profile.username} onChange={handleChange} className={`${inputBaseClass} ${formErrors.username ? 'border-red-500' : ''}`} required />
                     {formErrors.username && <p className="mt-1 text-xs text-red-600">{formErrors.username}</p>}
                 </div>
-{/* 
+                {/* 
                 <div>
                     <label htmlFor="website" className={labelBaseClass}>Website</label>
                     <input id="website" name="website" type="url" value={profile.website} onChange={handleChange} className={`${inputBaseClass} ${formErrors.website ? 'border-red-500' : ''}`} placeholder="https://example.com" />
