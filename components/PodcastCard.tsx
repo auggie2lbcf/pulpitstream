@@ -34,9 +34,7 @@ export function PodcastCard({ podcast, className }: PodcastCardProps) {
           <Image
             src={image_url || "/image.png"}
             alt={`Cover art for ${title}`}
-            // Use layout="fill" and object-cover for responsive images
-            layout="fill"
-            objectFit="cover"
+            fill
             className="transition-transform duration-300 group-hover:scale-105"
           />
         </div>
