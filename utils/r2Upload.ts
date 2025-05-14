@@ -15,7 +15,7 @@ async function uploadAvatarToR2(
 
         // Step 1: Request a presigned URL from your Cloudflare Pages Function.
         // This path should correspond to a function in your /functions directory
-        // (e.g., /functions/api/r2/generate-upload-avatar-url.ts)
+        // (e.g., /functions/api/r2/upload-avatar.ts)
         setFeedbackMessage({ text: 'Requesting upload permission...', type: 'info' });
         const presignedUrlResponse = await fetch('/api/r2/generate-upload-avatar-url', { // This is your Pages Function endpoint
             method: 'POST',
