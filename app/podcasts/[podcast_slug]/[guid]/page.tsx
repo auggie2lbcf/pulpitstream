@@ -3,7 +3,6 @@ import { createClient } from "@/utils/supabase/server";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Database } from "@/types/supabase"; // Import Database type
 
 export const runtime = 'edge';
 

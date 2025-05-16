@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { ArrowLeftIcon } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 import ProfileForm from '@/components/profile/ProfileForm';
 

@@ -8,7 +8,7 @@ interface PulpitLayoutProps {
   showRightPanel?: boolean;
 }
 
-export function PulpitLayout({ children, showRightPanel = false }: PulpitLayoutProps) {
+export function PulpitLayout({ children }: PulpitLayoutProps) {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Header />
