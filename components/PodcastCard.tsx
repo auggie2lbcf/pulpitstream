@@ -7,7 +7,7 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 // import type { Tables } from '@/types/supabase'; // <-- Remove this import
 
 // Define the minimum data required by the PodcastCard component
-interface PodcastCardData {
+export interface PodcastCardData { // Added export keyword here
   podcast_id: string; // Used for the key
   podcast_slug: string; // Used for the link href
   title: string | null;
