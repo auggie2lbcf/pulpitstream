@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google"; // Or your chosen font like Geist
 import "./globals.css"; //
-import { cn } from "@/lib/utils"; //
+import { cn } from "@/utils/utils"; //
 import { PulpitLayout } from "@/components/layout/PulpitLayout"; // Import the new layout
 import { ThemeProvider } from "next-themes";
 
