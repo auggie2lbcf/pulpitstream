@@ -1,13 +1,11 @@
-// app/components/layout/PulpitLayout.tsx
 import React from 'react';
 import { Header } from './Header';
 import { LeftSidebar } from './LeftSidebar';
-import { cn } from '@/lib/utils';
 import { MobileNav } from './MobileNav';
 
 interface PulpitLayoutProps {
   children: React.ReactNode;
-  showRightPanel?: boolean; // Prop to conditionally show the right panel
+  showRightPanel?: boolean;
 }
 
 export function PulpitLayout({ children, showRightPanel = false }: PulpitLayoutProps) {

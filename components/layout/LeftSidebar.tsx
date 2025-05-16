@@ -1,5 +1,4 @@
-// app/components/layout/LeftSidebar.tsx
-"use client"; // If you add interactivity like collapse button
+"use client";
 
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -17,116 +16,77 @@ interface LeftSidebarProps {
   className?: string;
 }
 
+interface SidebarItemProps {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  collapsed: boolean;
+}
+
+const SidebarItem: React.FC<SidebarItemProps> = ({ href, icon, label, collapsed }) => (
+  <Link
+    href={href}
+    className={cn(
+      "p-2 flex items-center rounded-md hover:bg-accent hover:text-accent-foreground transition-colors",
+      collapsed ? "justify-center" : "justify-start"
+    )}
+  >
+    <span className={cn("flex items-center", collapsed && "mx-auto")}>
+      {icon}
+      {!collapsed && <span className="ml-2">{label}</span>}
+    </span>
+  </Link>
+);
+
 export function LeftSidebar({ className }: LeftSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
     <aside
       className={cn(
-        "sticky top-14 border-r border-border bg-background transition-all duration-300 ease-in-out",
-        isCollapsed ? "w-16" : "w-[240px]", // Slightly smaller width
+        "sticky top-14 border-r border-border bg-background transition-all duration-100 ease-in-out",
+        isCollapsed ? "w-16" : "w-[240px]",
         "p-2 flex flex-col",
         className
       )}
+      aria-label="Sidebar"
     >
-      {/* Collapse button */}
       <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className={cn(
-          "mb-4 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-all duration-300 ease-in-out",
-          "hidden md:flex" // Hide on mobile
-        )}
+        onClick={() => setIsCollapsed((prev) => !prev)}
+        className="mb-4 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors hidden md:flex items-center justify-between"
+        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
-        {isCollapsed ? (
-          <ChevronRight className="mx-auto" />
-        ) : (
-          <div className="flex w-full items-center justify-between">
-            <span>Collapse</span>
-            <ChevronLeft />
-          </div>
-        )}
+        {isCollapsed ? <ChevronRight className="mx-auto" /> : <>
+          <span>Collapse</span>
+          <ChevronLeft />
+        </>}
       </button>
 
-      {/* Navigation */}
       <nav className="flex flex-col space-y-2">
-        {/* Navigation items */}
-        <Link
+        <SidebarItem
           href="/"
-          className={cn(
-            "p-2 rounded-md hover:bg-accent hover:text-accent-accent-foreground transition-all duration-300 ease-in-out",
-            isCollapsed && "justify-center"
-          )}
-        >
-          <div className={cn("flex")}>
-            {isCollapsed ? (
-              <div className={cn("mx-auto")}>
-                <LucideHome size={24} />
-              </div>
-            ) : (
-              <>
-                <LucideHome size={24} /> <p className={cn("ml-2")}>Home</p>
-              </>
-            )}
-          </div>
-        </Link>
-        <Link
+          icon={<LucideHome size={24} />}
+          label="Home"
+          collapsed={isCollapsed}
+        />
+        <SidebarItem
           href="/podcasts"
-          className={cn(
-            "p-2 rounded-md hover:bg-accent hover:text-accent-accent-foreground transition-all duration-300 ease-in-out",
-            isCollapsed && "justify-center"
-          )}
-        >
-          <div className={cn("flex")}>
-            {isCollapsed ? (
-              <div className={cn("mx-auto")}>
-                <LucidePodcast size={24} />
-              </div>
-            ) : (
-              <>
-                <LucidePodcast size={24} />{" "}
-                <p className={cn("ml-2")}>Podcasts</p>
-              </>
-            )}
-          </div>
-        </Link>
-        <Link
+          icon={<LucidePodcast size={24} />}
+          label="Podcasts"
+          collapsed={isCollapsed}
+        />
+        <SidebarItem
           href="/favorites"
-          className={cn(
-            "p-2 rounded-md hover:bg-accent hover:text-accent-accent-foreground transition-all duration-300 ease-in-out",
-            isCollapsed && "justify-center"
-          )}
-        >
-          <div className={cn("flex")}>
-            {isCollapsed ? (
-              <div className={cn("mx-auto")}>
-                <LucideStar size={24} />
-              </div>
-            ) : (
-              <>
-                <LucideStar size={24} /> <p className={cn("ml-2")}>Favorites</p>
-              </>
-            )}
-          </div>
-        </Link>
-        <Link
+          icon={<LucideStar size={24} />}
+          label="Favorites"
+          collapsed={isCollapsed}
+        />
+        <SidebarItem
           href="/profile"
-          className={cn(
-            "p-2 rounded-md hover:bg-accent hover:text-accent-accent-foreground transition-all duration-300 ease-in-out",
-            isCollapsed && "justify-center"
-          )}
-        >
-          <div className={cn("flex")}>
-            {isCollapsed ? (
-              <div className={cn("mx-auto")}>
-                <LucideUser size={24} />
-              </div>
-            ) : (
-              <>
-                <LucideUser size={24} /> <p className={cn("ml-2")}>Profile</p>
-              </>
-            )}
-          </div>
-        </Link>
+          icon={<LucideUser size={24} />}
+          label="Profile"
+          collapsed={isCollapsed}
+        />
       </nav>
     </aside>
   );

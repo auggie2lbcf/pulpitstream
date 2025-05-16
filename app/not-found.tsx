@@ -30,15 +30,6 @@ export default function NotFound() {
             <Home className="mr-2 h-5 w-5" />
             Go to Homepage
           </Link>
-          {/* You could add another relevant link here if applicable */}
-          {/*
-          <Link
-            href="/podcasts" // Example link
-            className="inline-flex items-center justify-center rounded-lg border border-border bg-secondary px-6 py-3.5 text-base font-semibold text-secondary-foreground shadow-sm transition-all duration-150 ease-in-out hover:bg-secondary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:scale-95"
-          >
-            Explore Podcasts <ChevronRight className="ml-1 h-5 w-5" />
-          </Link>
-          */}
         </div>
 
         <div className="mt-12 text-sm text-muted-foreground">
@@ -46,10 +37,6 @@ export default function NotFound() {
           <p className="mt-1">Error Code: 404</p>
         </div>
       </div>
-
-      <footer className="fixed inset-x-0 bottom-0 w-full pt-4 pb-2 text-center text-sm text-muted-foreground/70 shadow-t">
-        &copy; {new Date().getFullYear()} PulpitStream. All rights reserved.
-      </footer>
     </div>
   );
 }
