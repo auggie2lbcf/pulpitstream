@@ -2,14 +2,14 @@
 'use server';
 
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { cookies, type UnsafeUnwrappedCookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 
 // Function to get a Supabase client with SERVICE_ROLE_KEY for admin operations
 // This uses your existing pattern from utils/supabase/server.ts but explicitly uses the service role key.
 // IMPORTANT: Ensure SUPABASE_SERVICE_ROLE_KEY is set in your environment variables
 function getAdminSupabaseClient() {
-  const cookieStore = cookies();
+  const cookieStore = (cookies() as unknown as UnsafeUnwrappedCookies);
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!, // THIS IS THE CRITICAL PART for admin actions
@@ -43,7 +43,7 @@ function getAdminSupabaseClient() {
 // Action to check if the current user is an administrator
 // IMPLEMENT YOUR OWN ROBUST ADMIN CHECK LOGIC HERE
 export async function checkAdminAuth() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   // Use the standard client (anon key) to get the current user session
   const supabaseUserClient = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

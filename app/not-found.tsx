@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FileQuestion, Home, ChevronRight } from 'lucide-react';
+import { FileQuestion, Home } from 'lucide-react';
 
 export const runtime = 'edge';
 

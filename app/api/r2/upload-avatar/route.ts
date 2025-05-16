@@ -18,7 +18,7 @@ const corsHeaders = {
 };
 
 // Helper function to handle CORS preflight requests
-export async function OPTIONS(req: Request) {
+export async function OPTIONS() {
   return new Response(null, {
     status: 204, // No Content
     headers: {
