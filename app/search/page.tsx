@@ -9,9 +9,9 @@ import Link from "next/link"; // Import Link
 export const runtime = 'edge';
 
 interface SearchPageProps {
-    searchParams: {
+    searchParams: Promise<{
         query?: string;
-    };
+    }>;
 }
 
 interface SearchResultsData {
@@ -64,15 +64,14 @@ async function SearchResults({ query }: { query: string }) {
             <div className="mt-8">
                 <p className="text-muted-foreground">No podcasts found matching your query.</p>
                 {suggestion && suggestion !== query && ( // Check if suggestion is different from original query
-                    <p className="text-muted-foreground mt-4">
-                        Did you mean:{" "}
+                    (<p className="text-muted-foreground mt-4">Did you mean:{" "}
                         <Link
                             href={`/search?query=${encodeURIComponent(suggestion)}`}
                             className="text-primary hover:underline font-semibold"
                         >
                             {suggestion}
                         </Link>
-                    </p>
+                    </p>)
                 )}
             </div>
         );
@@ -87,7 +86,8 @@ async function SearchResults({ query }: { query: string }) {
     );
 }
 
-export default async function SearchPage({ searchParams }: SearchPageProps) {
+export default async function SearchPage(props: SearchPageProps) {
+    const searchParams = await props.searchParams;
     const query = searchParams.query || "";
 
 
